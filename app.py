@@ -106,6 +106,18 @@ def register():
             return render_template("register.html", error_message=error_message)
 
         hashed_password = generate_password_hash(password)
+
+        # Create the users table if it doesn't exist
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id SMALLINT(5),
+                username CHAR(255) NOT NULL,
+                password_hash CHAR(255) NOT NULL,
+                PRIMARY KEY (id)
+            );
+            """
+        )
         inser_user_query = "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         execute_sql_query(inser_user_query, (username, hashed_password))
         return render_template("registratio_success.html")
