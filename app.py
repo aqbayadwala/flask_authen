@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
-import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from flask_login import UserMixin
 import os
+import psycopg2
 
 # instantiate app
 app = Flask(__name__)
@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "thisisasecretkey"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["DATABASE_URL"] = os.environ.get("DATABASE_URL")
 
 # instantiate Session
 Session(app)
@@ -41,7 +41,7 @@ class User(UserMixin):
         user_query = "SELECT * FROM users WHERE id = %s"
         user_data = None
 
-        with pymysql.connect(
+        with psycopg2.connect(
             host="dpg-cj8lm0c5kgrc73b418s0-a",
             user="authen_9tnn_user",
             password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
@@ -66,7 +66,7 @@ def index():
 
 # function needed in registration route named "execute_sql_query"
 def execute_sql_query(query, params=None):
-    connection = pymysql.connect(
+    connection = psycopg2.connect(
         host="dpg-cj8lm0c5kgrc73b418s0-a",
         user="authen_9tnn_user",
         password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
@@ -90,7 +90,7 @@ def register():
         existing_user_query = "SELECT * FROM users WHERE username = %s"
         existing_user_username = None
 
-        with pymysql.connect(
+        with psycopg2.connect(
             host="dpg-cj8lm0c5kgrc73b418s0-a",
             user="authen_9tnn_user",
             password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
@@ -136,7 +136,7 @@ def login():
         user_query = "SELECT * FROM users WHERE username=%s"
         user_data = None
 
-        with pymysql.connect(
+        with psycopg2.connect(
             host="dpg-cj8lm0c5kgrc73b418s0-a",
             user="authen_9tnn_user",
             password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
