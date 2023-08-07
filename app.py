@@ -4,6 +4,7 @@ import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from flask_login import UserMixin
+import os
 
 # instantiate app
 app = Flask(__name__)
@@ -12,9 +13,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "thisisasecretkey"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = "mysql+pymysql://cadbay:TestPassword_123@localhost/authen"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
 # instantiate Session
 Session(app)
@@ -43,10 +42,10 @@ class User(UserMixin):
         user_data = None
 
         with pymysql.connect(
-            host="localhost",
-            user="cadbay",
-            password="TestPassword_123",
-            database="authen",
+            host="dpg-cj8lm0c5kgrc73b418s0-a",
+            user="authen_9tnn_user",
+            password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
+            database="authen_9tnn",
         ) as connection:
             cursor = connection.cursor()
             cursor.execute(user_query, user_id)
@@ -67,7 +66,10 @@ def index():
 # function needed in registration route named "execute_sql_query"
 def execute_sql_query(query, params=None):
     connection = pymysql.connect(
-        host="localhost", user="cadbay", password="TestPassword_123", database="authen"
+        host="dpg-cj8lm0c5kgrc73b418s0-a",
+        user="authen_9tnn_user",
+        password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
+        database="authen_9tnn",
     )
     cursor = connection.cursor()
     cursor.execute(query, params)
@@ -87,10 +89,10 @@ def register():
         existing_user_username = None
 
         with pymysql.connect(
-            host="localhost",
-            user="cadbay",
-            password="TestPassword_123",
-            database="authen",
+            host="dpg-cj8lm0c5kgrc73b418s0-a",
+            user="authen_9tnn_user",
+            password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
+            database="authen_9tnn",
         ) as connection:
             cursor = connection.cursor()
             cursor.execute(existing_user_query, username)
@@ -120,10 +122,10 @@ def login():
         user_data = None
 
         with pymysql.connect(
-            host="localhost",
-            user="cadbay",
-            password="TestPassword_123",
-            database="authen",
+            host="dpg-cj8lm0c5kgrc73b418s0-a",
+            user="authen_9tnn_user",
+            password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
+            database="authen_9tnn",
         ) as connection:
             cursor = connection.cursor()
             cursor.execute(user_query, username)
