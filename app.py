@@ -106,6 +106,7 @@ def register():
             return render_template("register.html", error_message=error_message)
 
         hashed_password = generate_password_hash(password)
+        hashed_password = str(hashed_password)
 
         # Create the users table if it doesn't exis
         cursor.execute(
