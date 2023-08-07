@@ -107,7 +107,7 @@ def register():
 
         hashed_password = generate_password_hash(password)
 
-        # Create the users table if it doesn't exist
+        # Create the users table if it doesn't exis
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
