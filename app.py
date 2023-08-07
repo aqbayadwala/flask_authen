@@ -46,6 +46,7 @@ class User(UserMixin):
             user="authen_9tnn_user",
             password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
             database="authen_9tnn",
+            port=5432,
         ) as connection:
             cursor = connection.cursor()
             cursor.execute(user_query, user_id)
@@ -70,6 +71,7 @@ def execute_sql_query(query, params=None):
         user="authen_9tnn_user",
         password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
         database="authen_9tnn",
+        port=5432,
     )
     cursor = connection.cursor()
     cursor.execute(query, params)
@@ -93,6 +95,7 @@ def register():
             user="authen_9tnn_user",
             password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
             database="authen_9tnn",
+            port=5432,
         ) as connection:
             cursor = connection.cursor()
             cursor.execute(existing_user_query, username)
@@ -126,6 +129,7 @@ def login():
             user="authen_9tnn_user",
             password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
             database="authen_9tnn",
+            port=5432,
         ) as connection:
             cursor = connection.cursor()
             cursor.execute(user_query, username)
