@@ -134,7 +134,6 @@ def login():
         user_data = cursor.fetchone()
 
         if user_data:
-            print(user_data[2])
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
