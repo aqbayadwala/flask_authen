@@ -118,7 +118,7 @@ def register():
 def login():
     if request.method == "POST":
         username_login = request.form["username"]
-        password_login = request.form["password"]
+        password_login = request.form["password"].encode("utf-8")
         print("login password:", password_login)
         create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
