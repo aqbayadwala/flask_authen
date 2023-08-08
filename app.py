@@ -107,8 +107,6 @@ def register():
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         )
         execute_sql_query(insert_user_query, (username, hashed_password))
-        connection_db.commit()
-        connection_db.close()
         return render_template("registration_success.html")
 
     return render_template("register.html")
@@ -131,12 +129,9 @@ def login():
         if user_data and check_password_hash(user_data[2], password):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
-            connection_db.commit()
-            connection_db.close()
+
             return redirect("/dashboard")
         else:
-            connection_db.commit()
-            connection_db.close()
             not_valid = "Invalid User"
             return render_template("login.html", not_valid=not_valid)
     return render_template("login.html")
