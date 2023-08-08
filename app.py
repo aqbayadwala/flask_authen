@@ -15,7 +15,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 app.config[
     "DATABASE_URL"
-] = "postgres://authen_9tnn_user:F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa@dpg-cj8lm0c5kgrc73b418s0-a.oregon-postgres.render.com/authen_9tnn"
+] = "postgres://cadbay:QPUlLdN5FFUvqrEEzucfmzTT3DvnyQZ7@dpg-cj8v06geba7s738d419g-a.oregon-postgres.render.com/authen_t6ed"
 
 # instantiate login manager
 login_manager = LoginManager()
@@ -31,10 +31,10 @@ def load_user(user_id):
 
 # Database connection object
 connection_db = psycopg2.connect(
-    host="dpg-cj8lm0c5kgrc73b418s0-a",
-    user="authen_9tnn_user",
-    password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
-    database="authen_9tnn",
+    host="dpg-cj8v06geba7s738d419g-a",
+    user="cadbay",
+    password="QPUlLdN5FFUvqrEEzucfmzTT3DvnyQZ7",
+    database="authen_t6ed",
     port=5432,
 )
 
@@ -69,8 +69,6 @@ def index():
 def execute_sql_query(query, params=None):
     cursor = connection_db.cursor()
     cursor.execute(query, params)
-    connection_db.commit()
-    cursor.close()
 
 
 # Registration Route
@@ -88,13 +86,8 @@ def register():
             )
         """
 
-        alter_table_query = (
-            "ALTER TABLE users ADD CONSTRAINT unique_username UNIQUE (username)"
-        )
-
         cursor = connection_db.cursor()
         cursor.execute(create_table_query)
-        cursor.execute(alter_table_query)
 
         existing_user_query = "SELECT * FROM users WHERE username = %s"
         existing_user_username = None
@@ -124,11 +117,11 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        user_query = "SELECT * FROM users WHERE username=%s"
+        user_query = "SELECT * FROM users WHERE username = %s"
         user_data = None
 
         cursor = connection_db.cursor()
-        execute_sql_query(user_query, (username,))
+        cursor.execute(user_query, (username,))
         user_data = cursor.fetchone()
 
         if user_data and check_password_hash(user_data[2], password):
