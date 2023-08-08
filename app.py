@@ -81,12 +81,13 @@ def register():
         password = request.form["password"]
 
         create_table_query = """
-        CREATE TABLE IF NOT EXISTS users (
-            id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-            username CHAR(255) NOT NULL,
-            password_hash CHAR(255) NOT NULL
-        )
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username CHAR(255) NOT NULL,
+                password_hash CHAR(255) NOT NULL
+            )
         """
+
         cursor = connection_db.cursor()
         cursor.execute(create_table_query)
 
