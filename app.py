@@ -137,7 +137,7 @@ def login():
         cursor.execute(create_table_query)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        type(user_data[2])
+        print(type(user_data[2]))
         check = check_password_hash(str(user_data[2]), password_login)
         print(check)
         if user_data and check:
