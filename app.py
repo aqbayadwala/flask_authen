@@ -101,6 +101,7 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
+        password = password.encode("utf-8")
         salt = gensalt()
         hashed_password = hashpw(password, salt)
 
@@ -141,6 +142,7 @@ def login():
         # hashed_check = hashed_check.strip()
         # print(hashed_check)
         # print(user_data)
+
         check = checkpw(password_login, user_data[2])
         print(check)
         if user_data and checkpw(password_login, user_data[2]):
