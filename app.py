@@ -83,13 +83,18 @@ def register():
         create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
-                username CHAR(255) NOT NULL,
+                username CHAR(255) NOT NULL UNIQUE,
                 password_hash CHAR(255) NOT NULL
             )
         """
 
+        alter_table_query = (
+            "ALTER TABLE users ADD CONSTRAINT unique_username UNIQUE (username)"
+        )
+
         cursor = connection_db.cursor()
         cursor.execute(create_table_query)
+        cursor.execute(alter_table_query)
 
         existing_user_query = "SELECT * FROM users WHERE username = %s"
         existing_user_username = None
