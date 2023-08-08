@@ -138,11 +138,14 @@ def login():
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
         hashed_check = user_data[2]
+        encoded_hash = hashed_check.encode("utf-8")
         print(hashed_check)
+        print(encoded_hash)
         # hashed_check = hashed_check.strip()
         # print(hashed_check)
         # print(user_data)
         password_login_enc = password_login.encode("utf-8")
+
         check = checkpw(password_login_enc, user_data[2])
         print(check)
         if user_data and checkpw(password_login_enc, user_data[2]):
