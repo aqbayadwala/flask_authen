@@ -108,6 +108,13 @@ def register():
         hashed_password = generate_password_hash(password)
         hashed_password = str(hashed_password)
 
+        # Create the database
+        cursor.execute(
+            """
+            CREATE DATABAS IF NOT EXCISTS hifzapp;
+            );
+            """
+        )
         # Create the users table if it doesn't exis
         cursor.execute(
             """
