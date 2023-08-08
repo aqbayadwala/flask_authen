@@ -5,7 +5,6 @@ from flask_login import UserMixin
 import psycopg2
 from bcrypt import gensalt, checkpw, hashpw
 
-
 # instantiate app
 app = Flask(__name__)
 
@@ -77,7 +76,7 @@ def execute_sql_query(query, params=None):
 def register():
     if request.method == "POST":
         username = request.form["username"]
-        password = request.form["password"]
+        password = request.form["password"].encode("utf-8")
         print("password: ", password)
 
         create_table_query = """
@@ -101,7 +100,6 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
-        password = password.encode("utf-8")
         salt = gensalt()
         hashed_password = hashpw(password, salt)
 
@@ -137,18 +135,9 @@ def login():
         cursor.execute(create_table_query)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        hashed_check = user_data[2]
-        encoded_hash = hashed_check.encode("utf-8")
-        print(hashed_check)
-        print(encoded_hash)
-        # hashed_check = hashed_check.strip()
-        # print(hashed_check)
-        # print(user_data)
-        password_login_enc = password_login.encode("utf-8")
-
-        check = checkpw(password_login_enc, encoded_hash)
+        check = checkpw(password_login, user_data[2])
         print(check)
-        if user_data and checkpw(password_login_enc, encoded_hash):
+        if user_data and check:
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
