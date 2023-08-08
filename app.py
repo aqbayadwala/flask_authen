@@ -132,8 +132,8 @@ def login():
         cursor.execute(create_table_query)
         cursor.execute(user_query, (username,))
         user_data = cursor.fetchone()
-
-        if user_data:
+        print(user_data)
+        if user_data and check_password_hash(user_data[2], password):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
