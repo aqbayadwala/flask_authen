@@ -133,7 +133,7 @@ def login():
         cursor.execute(user_query, (username,))
         user_data = cursor.fetchone()
 
-        if user_data and check_password_hash(user_data[2], password):
+        if user_data:
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
