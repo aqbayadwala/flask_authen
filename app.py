@@ -116,8 +116,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        username_login = request.form["username"]
+        password_login = request.form["password"]
 
         create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
@@ -132,16 +132,16 @@ def login():
 
         cursor = connection_db.cursor()
         cursor.execute(create_table_query)
-        cursor.execute(user_query, (username,))
+        cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        hashed_check = user_data[2]
-        print(hashed_check)
-        hashed_check = hashed_check.strip()
-        print(hashed_check)
-        print(user_data)
-        check = check_password_hash(user_data[2], password)
+        # hashed_check = user_data[2]
+        # print(hashed_check)
+        # hashed_check = hashed_check.strip()
+        # print(hashed_check)
+        # print(user_data)
+        check = check_password_hash(user_data[2], password_login)
         print(check)
-        if user_data and check_password_hash(user_data[2], password):
+        if user_data and check_password_hash(user_data[2], password_login):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
