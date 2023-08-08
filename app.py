@@ -142,8 +142,8 @@ def login():
         # hashed_check = hashed_check.strip()
         # print(hashed_check)
         # print(user_data)
-
-        check = checkpw(password_login, user_data[2])
+        password_login_enc = password_login.encode("utf-8")
+        check = checkpw(password_login_enc, user_data[2])
         print(check)
         if user_data and checkpw(password_login, user_data[2]):
             user = User(id=user_data[0], username=user_data[1])
