@@ -50,7 +50,7 @@ class User(UserMixin):
         user_data = None
 
         cursor = connection_db.cursor()
-        cursor.execute(user_query, user_id)
+        cursor.execute(user_query, (user_id))
         user_data = cursor.fetchone()
 
         if user_data:
