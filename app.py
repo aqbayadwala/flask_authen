@@ -117,10 +117,19 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
+        create_table_query = """
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username CHAR(255) NOT NULL UNIQUE,
+                password_hash CHAR(255) NOT NULL
+            )
+        """
+
         user_query = "SELECT * FROM users WHERE username = %s"
         user_data = None
 
         cursor = connection_db.cursor()
+        cursor.execute(create_table_query)
         cursor.execute(user_query, (username,))
         user_data = cursor.fetchone()
 
