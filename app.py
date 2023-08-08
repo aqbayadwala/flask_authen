@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from flask_login import UserMixin
 import psycopg2
+from bcrypt import gensalt, checkpw, hashpw
 
 
 # instantiate app
@@ -101,7 +101,8 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
-        hashed_password = generate_password_hash(password)
+        salt = gensalt()
+        hashed_password = hashpw(password, salt)
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
@@ -140,9 +141,9 @@ def login():
         # hashed_check = hashed_check.strip()
         # print(hashed_check)
         # print(user_data)
-        check = check_password_hash(user_data[2], password_login)
+        check = checkpw(password_login, user_data[2])
         print(check)
-        if user_data and check_password_hash(user_data[2], password_login):
+        if user_data and checkpw(password_login, user_data[2]):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
