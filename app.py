@@ -111,7 +111,7 @@ def register():
         # Create the database
         cursor.execute(
             """
-            CREATE DATABAS IF NOT EXCISTS hifzapp;
+            CREATE DATABASE IF NOT EXCISTS hifzapp;
             );
             """
         )
