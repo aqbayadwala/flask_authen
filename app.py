@@ -78,7 +78,7 @@ def execute_sql_query(query, params=None):
 def register():
     if request.method == "POST":
         username = request.form["username"]
-        password = request.form["password"].encode("utf-8")
+        password = request.form["password"]
         print("password: ", password)
 
         create_table_query = """
@@ -120,7 +120,7 @@ def register():
 def login():
     if request.method == "POST":
         username_login = request.form["username"]
-        password_login = request.form["password"].encode("utf-8")
+        password_login = request.form["password"]
         print("login password:", password_login)
         create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
