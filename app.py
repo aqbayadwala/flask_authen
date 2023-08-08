@@ -12,7 +12,7 @@ app = Flask(__name__)
 # app configuration
 app.config["SECRET_KEY"] = "thisisasecretkey"
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_PERMANENT"] = False
 app.config[
     "DATABASE_URL"
 ] = "postgres://cadbay:QPUlLdN5FFUvqrEEzucfmzTT3DvnyQZ7@dpg-cj8v06geba7s738d419g-a.oregon-postgres.render.com/authen_t6ed"
@@ -70,7 +70,6 @@ def execute_sql_query(query, params=None):
     cursor = connection_db.cursor()
     cursor.execute(query, params)
     connection_db.commit()
-    cursor.close()
 
 
 # Registration Route
@@ -108,7 +107,6 @@ def register():
         )
         execute_sql_query(insert_user_query, (username, hashed_password))
         connection_db.commit()
-        connection_db.close()
         return render_template("registration_success.html")
 
     return render_template("register.html")
