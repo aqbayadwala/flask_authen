@@ -146,9 +146,9 @@ def login():
         # print(user_data)
         password_login_enc = password_login.encode("utf-8")
 
-        check = checkpw(password_login_enc, user_data[2])
+        check = checkpw(password_login_enc, encoded_hash)
         print(check)
-        if user_data and checkpw(password_login_enc, user_data[2]):
+        if user_data and checkpw(password_login_enc, encoded_hash):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
             return redirect("/dashboard")
