@@ -3,7 +3,9 @@ from flask_session import Session
 from flask_login import LoginManager, login_required, login_user, logout_user
 from flask_login import UserMixin
 import psycopg2
-from bcrypt import gensalt, checkpw, hashpw
+
+# from bcrypt import gensalt, checkpw, hashpw
+from werkzeug.security import generate_password_hash, gen_salt, check_password_hash
 
 # instantiate app
 app = Flask(__name__)
@@ -100,8 +102,8 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
-        salt = gensalt()
-        hashed_password = hashpw(password, salt)
+        # salt = gensalt()
+        hashed_password = generate_password_hash(password, "pbkdf2")
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
@@ -135,7 +137,7 @@ def login():
         cursor.execute(create_table_query)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        check = checkpw(password_login, user_data[2])
+        check = check_password_hash(user_data[2], password_login)
         print(check)
         if user_data and check:
             user = User(id=user_data[0], username=user_data[1])
