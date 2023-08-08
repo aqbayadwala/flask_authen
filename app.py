@@ -69,6 +69,8 @@ def index():
 def execute_sql_query(query, params=None):
     cursor = connection_db.cursor()
     cursor.execute(query, params)
+    connection_db.commit()
+    cursor.close()
 
 
 # Registration Route
@@ -105,6 +107,8 @@ def register():
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         )
         execute_sql_query(insert_user_query, (username, hashed_password))
+        connection_db.commit()
+        connection_db.close()
         return render_template("registration_success.html")
 
     return render_template("register.html")
