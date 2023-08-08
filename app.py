@@ -78,6 +78,7 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        print("password: ", password)
 
         create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
@@ -118,7 +119,7 @@ def login():
     if request.method == "POST":
         username_login = request.form["username"]
         password_login = request.form["password"]
-
+        print("login password:", password_login)
         create_table_query = """
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
