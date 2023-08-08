@@ -139,6 +139,8 @@ def login():
         hashed_check = hashed_check.strip()
         print(hashed_check)
         print(user_data)
+        check = check_password_hash(user_data[2], password)
+        print(check)
         if user_data and check_password_hash(user_data[2], password):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
