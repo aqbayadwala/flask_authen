@@ -3,7 +3,7 @@ from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, login_user, logout_user
 from flask_login import UserMixin
-import pymysql
+import psycopg2
 
 
 # instantiate app
@@ -30,7 +30,7 @@ def load_user(user_id):
 
 
 # Database connection object
-connection_db = pymysql.connect(
+connection_db = psycopg2.connect(
     host="dpg-cj8lm0c5kgrc73b418s0-a",
     user="authen_9tnn_user",
     password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
