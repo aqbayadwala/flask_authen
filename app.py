@@ -123,13 +123,12 @@ def login():
         user_data = None
 
         cursor = connection_db.cursor()
-        cursor.execute(user_query, (username,))
+        execute_sql_query(user_query, (username,))
         user_data = cursor.fetchone()
 
         if user_data and check_password_hash(user_data[2], password):
             user = User(id=user_data[0], username=user_data[1])
             login_user(user)
-
             return redirect("/dashboard")
         else:
             not_valid = "Invalid User"
