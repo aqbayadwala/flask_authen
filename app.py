@@ -13,7 +13,9 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "thisisasecretkey"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["DATABASE_URL"] = os.environ.get("DATABASE_URL")
+app.config[
+    "DATABASE_URL"
+] = "postgresql://authen_9tnn_user:F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa@dpg-cj8lm0c5kgrc73b418s0-a.oregon-postgres.render.com/authen_9tnn"
 
 # instantiate Session
 Session(app)
@@ -64,20 +66,22 @@ def index():
     return render_template("home.html")
 
 
-# function needed in registration route named "execute_sql_query"
+# Database connection object
+connection_db = psycopg2.connect(
+    host="dpg-cj8lm0c5kgrc73b418s0-a",
+    user="authen_9tnn_user",
+    password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
+    database="authen_9tnn",
+    port=5432,
+)
+
+
+# Function for executing SQL queries
 def execute_sql_query(query, params=None):
-    connection = psycopg2.connect(
-        host="dpg-cj8lm0c5kgrc73b418s0-a",
-        user="authen_9tnn_user",
-        password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
-        database="authen_9tnn",
-        port=5432,
-    )
-    cursor = connection.cursor()
+    cursor = connection_db.cursor()
     cursor.execute(query, params)
-    connection.commit()
+    connection_db.commit()
     cursor.close()
-    connection.close()
 
 
 # Registration Route
@@ -90,45 +94,20 @@ def register():
         existing_user_query = "SELECT * FROM users WHERE username = %s"
         existing_user_username = None
 
-        with psycopg2.connect(
-            host="dpg-cj8lm0c5kgrc73b418s0-a",
-            user="authen_9tnn_user",
-            password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
-            database="authen_9tnn",
-            port=5432,
-        ) as connection:
-            cursor = connection.cursor()
-            cursor.execute(existing_user_query, username)
-            existing_user_username = cursor.fetchone()
+        cursor = connection_db.cursor()
+        cursor.execute(existing_user_query, (username,))
+        existing_user_username = cursor.fetchone()
 
         if existing_user_username:
-            error_message = "Username taken. Please choose a differnt username"
+            error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
         hashed_password = generate_password_hash(password)
-        hashed_password = str(hashed_password)
 
-        # Create the database
-        cursor.execute(
-            """
-            CREATE DATABASE IF NOT EXCISTS hifzapp;
-            );
-            """
-        )
-        # Create the users table if it doesn't exis
-        cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                id SMALLINT(5),
-                username CHAR(255) NOT NULL,
-                password_hash CHAR(255) NOT NULL,
-                PRIMARY KEY (id)
-            );
-            """
-        )
         inser_user_query = "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         execute_sql_query(inser_user_query, (username, hashed_password))
-        return render_template("registratio_success.html")
+        return render_template("registration_success.html")
+
     return render_template("register.html")
 
 
@@ -144,16 +123,9 @@ def login():
         user_query = "SELECT * FROM users WHERE username=%s"
         user_data = None
 
-        with psycopg2.connect(
-            host="dpg-cj8lm0c5kgrc73b418s0-a",
-            user="authen_9tnn_user",
-            password="F8VZ73lmc0peyFXC4wjCpMH2HDDHjtQa",
-            database="authen_9tnn",
-            port=5432,
-        ) as connection:
-            cursor = connection.cursor()
-            cursor.execute(user_query, username)
-            user_data = cursor.fetchone()
+        cursor = connection_db.cursor()
+        cursor.execute(user_query, (username,))
+        user_data = cursor.fetchone()
 
         if user_data and check_password_hash(user_data[2], password):
             user = User(id=user_data[0], username=user_data[1])
