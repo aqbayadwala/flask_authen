@@ -84,7 +84,7 @@ def register():
         existing_user_username = None
 
         cursor = connection_db.cursor()
-        cursor.execute(create_table_query_mysql)
+        cursor.execute(create_table_query_postgresql)
 
         cursor.execute(existing_user_query, (username,))
         existing_user_username = cursor.fetchone()
@@ -132,7 +132,7 @@ def login():
         user_data = None
 
         cursor = connection_db.cursor()
-        cursor.execute(create_table_query_mysql)
+        cursor.execute(create_table_query_postgresql)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
         hash = user_data[2]
