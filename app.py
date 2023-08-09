@@ -64,21 +64,21 @@ def register():
         bytes_register = password.encode("utf-8")
         # print(password)-debug
 
-        create_table_query_mysql = """
-            CREATE TABLE IF NOT EXISTS users (
-                id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
-                username CHAR(128) NOT NULL UNIQUE,
-                pass_hash CHAR(128) NOT NULL
-            )
-        """
-
-        # create_table_query_postgresql = """
+        # create_table_query_mysql = """
         #     CREATE TABLE IF NOT EXISTS users (
-        #         id SERIAL PRIMARY KEY,
-        #         username CHAR(255) NOT NULL UNIQUE,
-        #         password_hash CHAR(255) NOT NULL
+        #         id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+        #         username CHAR(128) NOT NULL UNIQUE,
+        #         pass_hash CHAR(128) NOT NULL
         #     )
         # """
+
+        create_table_query_postgresql = """
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username CHAR(255) NOT NULL UNIQUE,
+                password_hash CHAR(255) NOT NULL
+            )
+        """
 
         existing_user_query = "SELECT * FROM users WHERE username=%s"
         existing_user_username = None
@@ -112,21 +112,21 @@ def login():
         password_login = request.form["password"]
         bytes_login = password_login.encode("utf-8")
 
-        create_table_query_mysql = """
-            CREATE TABLE IF NOT EXISTS users (
-                id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
-                username CHAR(128) NOT NULL UNIQUE,
-                pass_hash CHAR(128) NOT NULL
-            )
-        """
-
-        # create_table_query_postgresql = """
+        # create_table_query_mysql = """
         #     CREATE TABLE IF NOT EXISTS users (
-        #         id SERIAL PRIMARY KEY,
-        #         username CHAR(255) NOT NULL UNIQUE,
-        #         password_hash CHAR(255) NOT NULL
+        #         id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+        #         username CHAR(128) NOT NULL UNIQUE,
+        #         pass_hash CHAR(128) NOT NULL
         #     )
         # """
+
+        create_table_query_postgresql = """
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username CHAR(255) NOT NULL UNIQUE,
+                password_hash CHAR(255) NOT NULL
+            )
+        """
 
         user_query = "SELECT * FROM users WHERE username=%s"
         user_data = None
