@@ -94,14 +94,14 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
-        salt = gensalt()
+        # salt = gensalt()
         hashed_password = generate_password_hash(password)
         # decoded_hashd_password = hashed_password.decode("utf-8")
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         )
-        cursor.execute(insert_user_query, (username, decoded_hashd_password))
+        cursor.execute(insert_user_query, (username, hashed_password))
         connection_db.commit()
         return render_template("registration_success.html")
 
@@ -114,7 +114,7 @@ def login():
     if request.method == "POST":
         username_login = request.form["username"]
         password_login = request.form["password"]
-        bytes_login = password_login.encode("utf-8")
+        # bytes_login = password_login.encode("utf-8")
 
         # create_table_query_mysql = """
         #     CREATE TABLE IF NOT EXISTS users (
