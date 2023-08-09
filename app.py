@@ -137,15 +137,14 @@ def login():
         user_data = cursor.fetchone()
         hash = user_data[2]
         print(hash)
-        hash_bytes = hash.encode("utf-8")
-        check = checkpw(bytes_login, hash_bytes)
+        # hash_bytes = hash.encode("utf-8")
+        check = checkpw(bytes_login, password_login)
         print(check)
 
-        if user_data:
-            if check:
-                user = User(id=user_data[0], username=user_data[1])
-                login_user(user)
-                return redirect("/dashboard")
+        if user_data and check:
+            user = User(id=user_data[0], username=user_data[1])
+            login_user(user)
+            return redirect("/dashboard")
         else:
             not_valid = "Invalid User"
             return render_template("login.html", not_valid=not_valid)
