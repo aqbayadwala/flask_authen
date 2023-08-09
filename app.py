@@ -4,6 +4,7 @@ import os
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask_login import UserMixin
 from bcrypt import gensalt, hashpw, checkpw
+import bcrypt
 
 app = Flask(__name__)
 
@@ -93,9 +94,8 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
-        salt = "salt"
-        salt_bytes = salt.encode("utf-8")
-        hashed_password = hashpw(bytes_register, salt_bytes)
+        salt = gensalt()
+        hashed_password = hashpw(bytes_register, salt)
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
@@ -140,6 +140,7 @@ def login():
         user_data = cursor.fetchone()
         hash = user_data[2]
         print(hash)
+        print(bcrypt.__hash__)
         hash_bytes = hash.encode("utf-8")
         check = checkpw(bytes_login, hash_bytes)
         print(check)
