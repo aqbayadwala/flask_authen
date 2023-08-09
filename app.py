@@ -101,17 +101,6 @@ def register():
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         )
         cursor.execute(insert_user_query, (username, decoded_hashd_password))
-        cursor = connection_db.cursor()
-        cursor.execute(create_table_query_postgresql)
-        cursor.execute(user_query, (username_login,))
-        user_data = cursor.fetchone()
-        hash = user_data[2]
-        print(hash)
-        # print(password_login)
-        # hash_bytes = hash.encode("utf-8")
-        # print(hash_bytes)
-        check = bcrypt.check_password_hash(hash, password)
-        print(check)
         connection_db.commit()
         return render_template("registration_success.html")
 
