@@ -3,7 +3,7 @@ import psycopg2
 import os
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask_login import UserMixin
-from bcrypt import gensalt, hashpw, checkpw
+from werkzeug.security import generate_password_hash, check_password_hash
 import bcrypt
 
 app = Flask(__name__)
@@ -95,8 +95,8 @@ def register():
             return render_template("register.html", error_message=error_message)
 
         salt = gensalt()
-        hashed_password = hashpw(bytes_register, salt)
-        decoded_hashd_password = hashed_password.decode("utf-8")
+        hashed_password = generate_password_hash(password)
+        # decoded_hashd_password = hashed_password.decode("utf-8")
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
@@ -141,9 +141,10 @@ def login():
         user_data = cursor.fetchone()
         hash = str(user_data[2])
         print(hash)
-        print(bcrypt.__hash__)
-        hash_bytes = hash.encode("utf-8")
-        check = checkpw(bytes_login, hash_bytes)
+        # print(bcrypt.__hash__)
+        # hash_bytes = hash.encode("utf-8")
+        # print(hash_bytes)
+        check = check_password_hash(hash, password_login)
         print(check)
 
         if user_data and check:
