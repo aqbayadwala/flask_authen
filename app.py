@@ -101,6 +101,17 @@ def register():
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         )
         cursor.execute(insert_user_query, (username, decoded_hashd_password))
+        cursor = connection_db.cursor()
+        cursor.execute(create_table_query_postgresql)
+        cursor.execute(user_query, (username_login,))
+        user_data = cursor.fetchone()
+        hash = user_data[2]
+        print(hash)
+        # print(password_login)
+        # hash_bytes = hash.encode("utf-8")
+        # print(hash_bytes)
+        check = bcrypt.check_password_hash(hash, password)
+        print(check)
         connection_db.commit()
         return render_template("registration_success.html")
 
@@ -113,7 +124,7 @@ def login():
     if request.method == "POST":
         username_login = request.form["username"]
         password_login = request.form["password"]
-        bytes_login = password_login.encode("utf-8")
+        # bytes_login = password_login.encode("utf-8")
 
         # create_table_query_mysql = """
         #     CREATE TABLE IF NOT EXISTS users (
@@ -140,6 +151,7 @@ def login():
         user_data = cursor.fetchone()
         hash = user_data[2]
         print(hash)
+        print(password_login)
         # hash_bytes = hash.encode("utf-8")
         # print(hash_bytes)
         check = bcrypt.check_password_hash(hash, password_login)
