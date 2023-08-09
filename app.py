@@ -93,7 +93,7 @@ def register():
             error_message = "Username taken. Please choose a different username"
             return render_template("register.html", error_message=error_message)
 
-        salt = gensalt()
+        salt = "salt"
         salt_bytes = salt.encode("utf-8")
         hashed_password = hashpw(bytes_register, salt_bytes)
 
