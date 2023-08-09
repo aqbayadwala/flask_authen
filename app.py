@@ -139,11 +139,11 @@ def login():
         cursor.execute(create_table_query_postgresql)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        hash = user_data[2]
+        hash = str(user_data[2])
         print(hash)
         print(bcrypt.__hash__)
-        # hash_bytes = hash.encode("utf-8")
-        check = checkpw(password_login, hash)
+        hash_bytes = hash.encode("utf-8")
+        check = checkpw(bytes_login, hash_bytes)
         print(check)
 
         if user_data and check:
