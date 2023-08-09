@@ -142,8 +142,8 @@ def login():
         hash = user_data[2]
         print(hash)
         print(bcrypt.__hash__)
-        hash_bytes = hash.encode("utf-8")
-        check = checkpw(bytes_login, hash_bytes)
+        # hash_bytes = hash.encode("utf-8")
+        check = checkpw(bytes_login, hash)
         print(check)
 
         if user_data and check:
