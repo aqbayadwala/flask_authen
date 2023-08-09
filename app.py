@@ -96,11 +96,12 @@ def register():
 
         salt = gensalt()
         hashed_password = hashpw(bytes_register, salt)
+        decoded_hashd_password = hashed_password.decode("utf-8")
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
         )
-        cursor.execute(insert_user_query, (username, hashed_password))
+        cursor.execute(insert_user_query, (username, decoded_hashd_password))
         connection_db.commit()
         return render_template("registration_success.html")
 
