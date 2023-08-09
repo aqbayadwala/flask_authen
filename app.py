@@ -94,7 +94,8 @@ def register():
             return render_template("register.html", error_message=error_message)
 
         salt = gensalt()
-        hashed_password = hashpw(bytes_register, salt)
+        salt_bytes = salt.encode("utf-8")
+        hashed_password = hashpw(bytes_register, salt_bytes)
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
