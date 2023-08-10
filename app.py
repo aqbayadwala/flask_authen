@@ -110,7 +110,7 @@ def register():
 
         hashed_password = bcrypt.generate_password_hash(password)
         decoded_hashd_password = hashed_password.decode("utf-8")
-        print("hash while register: ", decoded_hashd_password)
+        # print("hash while register: ", decoded_hashd_password)
 
         insert_user_query = (
             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
@@ -155,13 +155,13 @@ def login():
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
         hash = user_data[2]
-        print("Hash From DB: ", hash)
-        print("Password while logging in: ", password_login)
+        # print("Hash From DB: ", hash)
+        # print("Password while logging in: ", password_login)
         # print("Login Password Hash: ", hashed_incoming)
         # hash_bytes = hash.encode("utf-8")
         # print(hash_bytes)
         check = bcrypt.check_password_hash(hash, password_login)
-        print(check)
+        # print(check)
 
         if user_data and check:
             user = User(id=user_data[0], username=user_data[1])
