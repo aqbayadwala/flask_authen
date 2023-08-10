@@ -72,9 +72,9 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form["username"]
+        username = request.form.get("username")
         # print(username)-debug
-        password = request.form["password"]
+        password = request.form.get("password")
         # bytes_register = password.encode("utf-8")
         # print(password)-debug
 
@@ -125,8 +125,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username_login = request.form["username"]
-        password_login = request.form["password"]
+        username_login = request.form.get("username")
+        password_login = request.form.get("password")
         # hashed_incoming = bcrypt.generate_password_hash(password_login)
         # bytes_login = password_login.encode("utf-8")
 
