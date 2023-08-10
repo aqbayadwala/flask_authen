@@ -124,6 +124,7 @@ def login():
     if request.method == "POST":
         username_login = request.form["username"]
         password_login = request.form["password"]
+        hashed_incoming = bcrypt.generate_password_hash(password_login)
         # bytes_login = password_login.encode("utf-8")
 
         # create_table_query_mysql = """
@@ -150,8 +151,9 @@ def login():
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
         hash = user_data[2]
-        print(hash)
-        print(password_login)
+        print("Hash From DB: ", hash)
+        print("Password while logging in: ", password_login)
+        print("Login Password Hash: ", hashed_incoming)
         # hash_bytes = hash.encode("utf-8")
         # print(hash_bytes)
         check = bcrypt.check_password_hash(hash, password_login)
