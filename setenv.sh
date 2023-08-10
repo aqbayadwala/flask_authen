@@ -1,9 +1,0 @@
-export DATABASE_URL="pymysql+mysql://cadbay:TestPassword_123/flask_authen"
-export SECRET_KEY="secret"
-export DB_HOST="localhost"
-export DB_PORT=3306
-export DB_USER="cadbay"
-export DB_PASSWORD="TestPassword_123"
-export DB_NAME="flask_authen"
-export FLASK_APP="app.py"
-export FLASK_DEBUG=1
