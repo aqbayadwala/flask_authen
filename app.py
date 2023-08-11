@@ -4,8 +4,8 @@ import pymysql
 import os
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask_login import UserMixin
-
 from flask_bcrypt import Bcrypt
+import requests
 
 # from argon2 import PasswordHasher
 
@@ -78,7 +78,7 @@ def register():
                 password_hash CHAR(128) NOT NULL
             )
         """
-        
+
         # Recaptcha verification
         recaptcha_response = request.form.get("g-recaptcha-response")
         recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
