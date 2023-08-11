@@ -23,16 +23,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-# # Database Connection MySQL
-# connection_db = pymysql.connect(
-#     host=os.environ.get("DB_HOST"),
-#     port=int(os.environ.get("DB_PORT")),
-#     user=os.environ.get("DB_USER"),
-#     password=os.environ.get("DB_PASSWORD"),
-#     database=os.environ.get("DB_NAME"),
-# )
 
-# Database connection postgresql
+# Database connection mysql
 connection_db = pymysql.connect(
     host=os.environ.get("MYSQLHOST"),
     port=int(os.environ.get("MYSQLPORT")),
@@ -86,14 +78,22 @@ def register():
                 password_hash CHAR(128) NOT NULL
             )
         """
+        
+        # Recaptcha verification
+        recaptcha_response = request.form.get("g-recaptcha-response")
+        recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            {"secret": recaptcha_secret, "response": recaptcha_response},
+        )
 
-        # create_table_query_postgresql = """
-        #     CREATE TABLE IF NOT EXISTS users (
-        #         id SERIAL PRIMARY KEY,
-        #         username CHAR(255) NOT NULL UNIQUE,
-        #         password_hash CHAR(255) NOT NULL
-        #     )
-        # """
+        recaptcha_data = response.json()
+        print(recaptcha_data["success"])
+        if not recaptcha_data["success"]:
+            error_message_recaptcha = "reCAPTCHA verification failed. Please try again."
+            return render_template(
+                "register.html", error_message_recaptcha=error_message_recaptcha
+            )
 
         existing_user_query = "SELECT * FROM users WHERE username=%s"
         existing_user_username = None
@@ -139,13 +139,21 @@ def login():
             )
         """
 
-        # create_table_query_postgresql = """
-        #     CREATE TABLE IF NOT EXISTS users (
-        #         id SERIAL PRIMARY KEY,
-        #         username CHAR(255) NOT NULL UNIQUE,
-        #         password_hash CHAR(255) NOT NULL
-        #     )
-        # """
+        # Recaptcha verification
+        recaptcha_response = request.form.get("g-recaptcha-response")
+        recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            {"secret": recaptcha_secret, "response": recaptcha_response},
+        )
+
+        recaptcha_data = response.json()
+        print(recaptcha_data["success"])
+        if not recaptcha_data["success"]:
+            error_message_recaptcha = "reCAPTCHA verification failed. Please try again."
+            return render_template(
+                "register.html", error_message_recaptcha=error_message_recaptcha
+            )
 
         user_query = "SELECT * FROM users WHERE username=%s"
         user_data = None

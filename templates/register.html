@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 </head>
 
 <body>
@@ -15,6 +17,11 @@
         </div>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
+        <div class="g-recaptcha" data-sitekey="6LfiF5gnAAAAAMjmHGlZn8PWG_uQFbuwXhU0MHf3">
+        </div>
+        <div id="error-message" style="color: red;">
+            {{ error_message_recaptcha }}
+        </div>
         <input type="submit" value="Register">
     </form>
 
