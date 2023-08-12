@@ -164,6 +164,8 @@ def login():
         user_data = cursor.fetchone()
         if type(user_data) != None:
             hash = user_data[2]
+        else:
+            hash = None
         # print("Hash From DB: ", hash)
         # print("Password while logging in: ", password_login)
         # print("Login Password Hash: ", hashed_incoming)
