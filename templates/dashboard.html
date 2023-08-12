@@ -11,6 +11,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -44,7 +45,9 @@
 <body>
     <div class="jumbotron text-center">
         <h1>Dashboard</h1>
+        <div><a href="{{url_for('add_student')}}">Add Student</a></div>
         <a href="{{url_for('logout')}}">Click here to logout</a>
+
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
