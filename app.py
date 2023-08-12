@@ -148,7 +148,7 @@ def login():
         )
 
         recaptcha_data = response.json()
-        print(recaptcha_data["success"])
+        # print(recaptcha_data["success"])
         if not recaptcha_data["success"]:
             error_message_recaptcha = "reCAPTCHA verification failed. Please try again."
             return render_template(
@@ -162,7 +162,7 @@ def login():
         cursor.execute(create_table_query_mysql)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        print(user_data)
+        # print(user_data)
         if user_data == None:
             not_valid = "Invalid User"
             return render_template("login.html", not_valid=not_valid)
