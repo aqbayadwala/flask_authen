@@ -88,7 +88,7 @@ def register():
         )
 
         recaptcha_data = response.json()
-        print(recaptcha_data["success"])
+        # print(recaptcha_data["success"])
         if not recaptcha_data["success"]:
             error_message_recaptcha = "reCAPTCHA verification failed. Please try again."
             return render_template(
@@ -162,10 +162,11 @@ def login():
         cursor.execute(create_table_query_mysql)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        if type(user_data) != None:
-            hash = user_data[2]
-        else:
-            hash = None
+        print(user_data)
+        if user_data == None:
+            not_valid = "Invalid User"
+            return render_template("login.html", not_valid=not_valid)
+        hash = user_data[2]
         # print("Hash From DB: ", hash)
         # print("Password while logging in: ", password_login)
         # print("Login Password Hash: ", hashed_incoming)
