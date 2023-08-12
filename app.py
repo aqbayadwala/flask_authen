@@ -162,7 +162,8 @@ def login():
         cursor.execute(create_table_query_mysql)
         cursor.execute(user_query, (username_login,))
         user_data = cursor.fetchone()
-        hash = user_data[2]
+        if type(user_data) != None:
+            hash = user_data[2]
         # print("Hash From DB: ", hash)
         # print("Password while logging in: ", password_login)
         # print("Login Password Hash: ", hashed_incoming)
