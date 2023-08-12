@@ -189,6 +189,41 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+# Add student route
+@app.route("/add_student", methods=["GET", "POST"])
+def add_student():
+    if request.method == "POST":
+        fullname = request.form["fullname"]
+        darajah = request.form["std"]
+        juz = request.form["currenthifz"]
+        email = request.form["email"]
+        create_table_query_mysql = """
+            CREATE TABLE IF NOT EXISTS students (
+                id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+                fullname CHAR(128) NOT NULL,
+                darajah CHAR(128) NOT NULL,
+                juz SMALLINT(2) NOT NULL,
+                email CHAR(128) DEFAULT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """
+
+        insert_student_query = "INSERT INTO students (fullname, darajah, juz, email) VALUES (%s, %s, %s, %s)"
+
+        cursor = connection_db.cursor()
+        cursor.execute(create_table_query_mysql)
+        cursor.execute(insert_student_query, (fullname, darajah, juz, email))
+        connection_db.commit()
+        add_success = True
+
+        add_success_msg = "Student added successfully."
+        return render_template("add_student.html", add_success_msg=add_success_msg)
+        # if add_success:
+        #     add_success_msg = "Student added successfully."
+        #     return render_template("add_students", add_student_msg=add_success_msg)
+    return render_template("add_student.html")
+
+
 # Logout route
 @app.route("/logout", methods=["GET", "POST"])
 @login_required
