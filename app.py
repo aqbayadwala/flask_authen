@@ -12,7 +12,7 @@ bcrypt = Bcrypt(app)
 
 # configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URL")
-app.config["SECRET_KEY"] = os.environ.get("SECRET")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 
 # Login manager

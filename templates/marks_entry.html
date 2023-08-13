@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Student Entry</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
@@ -19,33 +19,13 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-        }
-
-        container h1 {
-            text-align: center;
-        }
-
-        .container {
-            width: 50%;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 767px) {
-            .container {
-                width: 100%;
-            }
-        }
-
-        h1 {
-            font-size: 23px;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-align: center;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         a {
             font-size: 18px;
+            margin: 0;
 
         }
 
@@ -118,7 +98,7 @@
 
         .paragraph-input {
             width: 550px;
-            height: 70px;
+            height: 66px;
             /* Adjust height as needed */
             border: 1px inset lightgray;
             box-sizing: border-box;
@@ -128,13 +108,11 @@
             font-size: 16px;
         }
 
-
-
         .text-center {
             display: flex;
             text-align: center;
             justify-content: center;
-            padding: 40px;
+            padding-top: 23px;
             /* border: 1px solid #ccc; */
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
@@ -142,12 +120,85 @@
             height: 600px;
             margin-top: 10px;
         }
+
+        @media (max-width: 767px) {
+
+            /* body {
+                display: flex;
+                flex-direction: column;
+                justify-content: top;
+                align-items: top;
+                width: 10%;
+                min-height: 100vh;
+                background-image: url('/static/5630974.jpg');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }*/
+
+            body {
+                display: block;
+                justify-content: top;
+                align-items: top;
+                width: 100vw;
+                min-height: 100vh;
+                background-image: url('/static/5630974.jpg');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                overflow-x: hidden;
+            }
+
+            .text-center {
+                width: 100%;
+                background-color: transparent;
+            }
+
+            .form-wrapper.student {
+                flex-direction: column;
+            }
+
+            .form-group.roll {
+                margin-left: 0;
+            }
+
+            .form-wrapper.murajaah {
+                flex-direction: column;
+            }
+
+            .form-wrapper.juzhaali {
+                flex-direction: column;
+            }
+
+            #juzhaalilabel {
+                margin: 0;
+            }
+
+            .form-control.juzhaalito {
+                margin-left: 0;
+            }
+
+            .form-control.juzhaalimarks {
+                margin-left: 0;
+            }
+
+            .paragraph-input {
+                width: 100%;
+            }
+
+            a {
+                font-size: 14px;
+            }
+
+
+
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="jumbotron text-center">
+    <div class="container text-center">
         <div id="add_success_msg">
             <h3></h3>
         </div>
@@ -156,7 +207,7 @@
             <div class="form-wrapper student">
                 <div class="form-group">
                     <label for="sanah">Roll No:</label>
-                    <select class="form-control" id="juz" name="student">
+                    <select class="form-control" id="roll" name="student">
                         <option value="">Select student</option>
                         <option value="">
                             {%for entry in user_data%}
@@ -167,7 +218,7 @@
                 </div>
                 <div class="form-group roll">
                     <label for="sanah">Student:</label>
-                    <select class="form-control" id="juz" name="juz" disabled>
+                    <select class="form-control" id="student" name="student" disabled>
                         <option value="">
                             {%for entry in user_data%}
                             {{entry[]}}
@@ -177,7 +228,7 @@
                 </div>
                 <div class="form-group roll">
                     <label for="sanah">Sanah:</label>
-                    <select class="form-control" id="juz" name="juz" disabled>
+                    <select class="form-control" id="sanah" name="sanah" disabled>
                         <option value="">
                             {%for entry in user_data%}
                             {{entry[]}}
@@ -187,9 +238,9 @@
                 </div>
             </div>
             <div class="form-wrapper murajaah">
-                <div class="form-group" style="margin-right: 20px;">
+                <div class="form-group">
                     <label for="currenthifz">Muraja'ah Juz:</label>
-                    <select class="form-control" id="juz" name="juz" required>
+                    <select class="form-control" id="murajaahjuz" name="murajahjuz" required>
                         <option value="">Select juz</option>
                         {%for entry in user_id%}
                         {{entry}}
@@ -199,7 +250,7 @@
 
                 <div class="form-group">
                     <label for="currenthifz">Muraja'ah Marks:</label>
-                    <select class="form-control" id="juz" name="currenthifz" required>
+                    <select class="form-control" id="murajaahmarks" name="murajaahmarks" required>
                         <option value="">Select juz</option>
                         {%for entry in user_id%}
                         {{entry}}
@@ -210,7 +261,7 @@
             <div class="form-wrapper juzhaali">
                 <div class="form-group">
                     <label id="juzhaalilabel">Juz Haali From:</label>
-                    <select class="form-control" id="juzhaali" name="juz" required>
+                    <select class="form-control" id="juzhaalifrom" name="juzhaalifrom" required>
                         <option value="">Select juz</option>
                         {%for entry in user_id%}
                         {{entry}}
@@ -220,7 +271,7 @@
 
                 <div class="form-group">
                     <label id="juzhaalilabel">Juz Haali Upto:</label>
-                    <select class="form-control juzhaalito" id="juzhaali" name="currenthifz" required>
+                    <select class="form-control juzhaalito" id="juzhaalito" name="juzhaalito" required>
                         <option value="">Select juz</option>
                         {%for entry in user_id%}
                         {{entry}}
@@ -229,7 +280,7 @@
                 </div>
                 <div class="form-group">
                     <label id="juzhaalilabel">Juz Haali Marks:</label>
-                    <select class="form-control juzhaalimarks" id="juzhaali" name="currenthifz" required>
+                    <select class="form-control juzhaalimarks" id="juzhaalimarks" name="juzhaalimarks" required>
                         <option value="">Select juz</option>
                         {%for entry in user_id%}
                         {{entry}}
