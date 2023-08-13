@@ -34,6 +34,7 @@
 
         #error-message {
             color: red;
+            padding-bottom: 20px;
         }
 
         #not_valid {
@@ -50,9 +51,15 @@
 <body>
     <div class="container center-content">
         <form method="post" action="/login" accept-charset="UTF-8">
-            <div id="not_valid">
-                {{ not_valid }}
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <div id="error-message">
+                {% for category, message in messages %}
+                {{ message }}
+                {%endfor%}
             </div>
+            {%endif%}
+            {%endwith%}
             <div class="form-group"><label for="username">Username:</label>
                 <input class="form-control" type="text" id="username" name="username" required><br>
             </div>
@@ -61,9 +68,7 @@
             </div>
             <div class="g-recaptcha" data-sitekey="6LfiF5gnAAAAAMjmHGlZn8PWG_uQFbuwXhU0MHf3">
             </div>
-            <div id="error-message">
-                {{ error_message_recaptcha }}
-            </div>
+
             <input type="submit" value="Login" class="btn btn-default">
 
             <div id="url-register">

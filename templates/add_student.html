@@ -13,7 +13,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* align-items: center; */
+            align-items: center;
             min-height: 100vh;
             background-image: url('/static/5630974.jpg');
             background-size: cover;
@@ -23,6 +23,11 @@
 
         .container h1 {
             text-align: center;
+
+        }
+
+        .container {
+            width: 35%;
         }
 
         @media (max-width: 767px) {
@@ -34,7 +39,8 @@
 
         h1 {
             font-size: 32px;
-            margin-bottom: 20px;
+            padding-bottom: 20px;
+            margin: 0;
         }
 
         a {
@@ -49,11 +55,11 @@
 </head>
 
 <body>
+    <div id="add_success_msg">
+        <h3 style="color: darkblue;">{{ add_success_msg }}</h2>
+    </div>
+    <h1>ADD STUDENT</h1>
     <div class="container">
-        <div id="add_success_msg">
-            <h3 style="color: darkblue;">{{ add_success_msg }}</h2>
-        </div>
-        <h1>ADD STUDENT</h1>
         <form method="post" action="/add_student" accept-charset="UTF-8">
             <!-- Form fields for student data -->
 

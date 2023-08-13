@@ -11,6 +11,8 @@
     <style>
         /* Custom CSS to center the form and set background image */
         body {
+            display: flex;
+            flex-direction: column;
             background-image: url('/static/5630974.jpg');
             background-size: cover;
             background-repeat: no-repeat;
@@ -32,6 +34,7 @@
 
         #error-message {
             color: red;
+            padding-bottom: 20px;
         }
     </style>
 </head>
@@ -39,21 +42,24 @@
 <body>
     <div class="container center-content">
         <form method="post" action="/register" accept-charset="UTF-8">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <div id="error-message">
+                {% for category, message in messages %}
+                {{ message }}
+                {%endfor%}
+            </div>
+            {%endif%}
+            {%endwith%}
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input class="form-control" type="text" id="username" name="username" required><br>
-                <div id="error-message" style="color: red;">
-                    {{ error_message }}
-                </div>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input class="form-control" type="password" id="password" name="password" required><br>
             </div id="captcha">
             <div class="g-recaptcha" data-sitekey="6LfiF5gnAAAAAMjmHGlZn8PWG_uQFbuwXhU0MHf3">
-            </div>
-            <div id="error-message">
-                {{ error_message_recaptcha }}
             </div>
             <input type="submit" value="Register" class="btn btn-default">
             <div style="margin-top: 20px;"><a href="{{url_for('login')}}">Already have an account? Log In</a></div>

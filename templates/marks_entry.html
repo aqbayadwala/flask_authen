@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Student Entry</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('/static/5630974.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        container h1 {
+            text-align: center;
+        }
+
+        .container {
+            width: 50%;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                width: 100%;
+            }
+        }
+
+        h1 {
+            font-size: 23px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        a {
+            font-size: 18px;
+
+        }
+
+        #dashboard {
+            margin-top: 20px;
+        }
+
+        #add_success_msg h3 {
+            text-align: center;
+        }
+
+        .form-wrapper.student {
+            display: flex;
+            padding-bottom: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-wrapper.murajaah {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-wrapper.juzhaali {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-group {
+
+            text-align: center;
+        }
+
+        .form-group.roll {
+            margin-left: 20px;
+        }
+
+        .form-control {
+            width: 180px;
+            display: flex;
+            text-align: center;
+        }
+
+
+        #juzhaali {
+            width: 112.5px;
+        }
+
+        #juzhaalilabel {
+            font-size: 13px;
+            margin-left: 13px;
+        }
+
+        .form-control.juzhaalito {
+            margin-left: 20px;
+        }
+
+        .form-control.juzhaalimarks {
+            margin-left: 20px;
+        }
+
+        .form-wrapper.remarks {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .paragraph-input {
+            width: 550px;
+            height: 70px;
+            /* Adjust height as needed */
+            border: 1px inset lightgray;
+            box-sizing: border-box;
+            resize: none;
+            /* Disable resizing */
+            vertical-align: top;
+            font-size: 16px;
+        }
+
+
+
+        .text-center {
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            padding: 40px;
+            /* border: 1px solid #ccc; */
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            width: 670px;
+            height: 600px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="jumbotron text-center">
+        <div id="add_success_msg">
+            <h3></h3>
+        </div>
+        <form method="post" action="/marks_entry" accept-charset="UTF-8" onclick="displayMessage()">
+            <!-- Form fields for student data -->
+            <div class="form-wrapper student">
+                <div class="form-group">
+                    <label for="sanah">Roll No:</label>
+                    <select class="form-control" id="juz" name="student">
+                        <option value="">Select student</option>
+                        <option value="">
+                            {%for entry in user_data%}
+                            {{entry[]}}
+                            {%endfor%}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group roll">
+                    <label for="sanah">Student:</label>
+                    <select class="form-control" id="juz" name="juz" disabled>
+                        <option value="">
+                            {%for entry in user_data%}
+                            {{entry[]}}
+                            {%endfor%}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group roll">
+                    <label for="sanah">Sanah:</label>
+                    <select class="form-control" id="juz" name="juz" disabled>
+                        <option value="">
+                            {%for entry in user_data%}
+                            {{entry[]}}
+                            {%endfor%}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-wrapper murajaah">
+                <div class="form-group" style="margin-right: 20px;">
+                    <label for="currenthifz">Muraja'ah Juz:</label>
+                    <select class="form-control" id="juz" name="juz" required>
+                        <option value="">Select juz</option>
+                        {%for entry in user_id%}
+                        {{entry}}
+                        {%endfor%}
+                    </select><br>
+                </div>
+
+                <div class="form-group">
+                    <label for="currenthifz">Muraja'ah Marks:</label>
+                    <select class="form-control" id="juz" name="currenthifz" required>
+                        <option value="">Select juz</option>
+                        {%for entry in user_id%}
+                        {{entry}}
+                        {%endfor%}
+                    </select><br>
+                </div>
+            </div>
+            <div class="form-wrapper juzhaali">
+                <div class="form-group">
+                    <label id="juzhaalilabel">Juz Haali From:</label>
+                    <select class="form-control" id="juzhaali" name="juz" required>
+                        <option value="">Select juz</option>
+                        {%for entry in user_id%}
+                        {{entry}}
+                        {%endfor%}
+                    </select><br>
+                </div>
+
+                <div class="form-group">
+                    <label id="juzhaalilabel">Juz Haali Upto:</label>
+                    <select class="form-control juzhaalito" id="juzhaali" name="currenthifz" required>
+                        <option value="">Select juz</option>
+                        {%for entry in user_id%}
+                        {{entry}}
+                        {%endfor%}
+                    </select><br>
+                </div>
+                <div class="form-group">
+                    <label id="juzhaalilabel">Juz Haali Marks:</label>
+                    <select class="form-control juzhaalimarks" id="juzhaali" name="currenthifz" required>
+                        <option value="">Select juz</option>
+                        {%for entry in user_id%}
+                        {{entry}}
+                        {%endfor%}
+                    </select><br>
+                </div>
+            </div>
+            <div class="form-wrapper remarks">
+                <div class="form-group">
+                    <label for="parents">Remarks for parents</label><br>
+                    <textarea name="parent_remarks" id="paragraph" class="paragraph-input"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="student">Remarks for student</label><br>
+                    <textarea name="student_remarks" id="paragraph" class="paragraph-input"></textarea>
+                </div>
+            </div>
+
+
+
+
+            <!-- Submit button -->
+            <input type="submit" value="Add" class="btn btn-default">
+            <div id="dashboard">
+                <a href="{{url_for('dashboard')}}">Dashboard</a>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        function displayMessage() {
+            var messageElement = document.getElementById("message");
+            messageElement.textContent = "Done";
+        }
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ"
+        crossorigin="anonymous"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"
+        integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

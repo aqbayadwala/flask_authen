@@ -1,21 +1,18 @@
-from flask import Flask, render_template, request, redirect
-import psycopg2
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 import pymysql
 import os
 from flask_login import LoginManager, login_user, login_required, logout_user
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask_bcrypt import Bcrypt
 import requests
 
-# from argon2 import PasswordHasher
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-# ph = PasswordHasher()
 
 # configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URL")
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET")
 
 
 # Login manager
@@ -24,14 +21,50 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 
-# Database connection mysql
-connection_db = pymysql.connect(
-    host=os.environ.get("MYSQLHOST"),
-    port=int(os.environ.get("MYSQLPORT")),
-    user=os.environ.get("MYSQLUSER"),
-    password=os.environ.get("MYSQLPASSWORD"),
-    database=os.environ.get("MYSQLDATABASE"),
-)
+# # Database connection mysql
+# connection_db = pymysql.connect(
+#     host=os.environ.get("MYSQLHOST"),
+#     port=int(os.environ.get("MYSQLPORT")),
+#     user=os.environ.get("MYSQLUSER"),
+#     password=os.environ.get("MYSQLPASSWORD"),
+#     database=os.environ.get("MYSQLDATABASE"),
+# )
+
+
+def db_connection(other_query, create_table=None, params=None):
+    with pymysql.connect(
+        host=os.environ.get("MYSQLHOST"),
+        port=int(os.environ.get("MYSQLPORT")),
+        user=os.environ.get("MYSQLUSER"),
+        password=os.environ.get("MYSQLPASSWORD"),
+        database=os.environ.get("MYSQLDATABASE"),
+    ) as connection_db:
+        cursor = connection_db.cursor()
+
+        if create_table:
+            cursor.execute(create_table)
+        if params is None:
+            cursor.execute(other_query)
+        else:
+            cursor.execute(other_query, params)
+
+        data = cursor.fetchone()
+        cursor.close()
+        connection_db.commit()
+        return data
+
+
+mysql_queries = {
+    "create_database_hifzapp": "CREATE DATABASE IF NOT EXISTS hifzapp",
+    "create_users_table_query": """
+            CREATE TABLE IF NOT EXISTS users (
+                id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+                username CHAR(128) NOT NULL UNIQUE,
+                password_hash CHAR(128) NOT NULL
+            )
+        """,
+    "existing_user_query": "SELECT * FROM users WHERE username=%s",
+}
 
 
 # User Class
@@ -45,9 +78,7 @@ class User(UserMixin):
         user_query = "SELECT * FROM users WHERE id = %s"
         user_data = None
 
-        cursor = connection_db.cursor()
-        cursor.execute(user_query, (user_id,))
-        user_data = cursor.fetchone()
+        user_data = db_connection(user_query, params=(user_id,))
 
         if user_data:
             return User(id=user_data[0], username=user_data[1])
@@ -68,10 +99,11 @@ def register():
         username = request.form["username"]
         # print(username)-debug
         password = request.form["password"]
+
         # bytes_register = password.encode("utf-8")
         # print(password)-debug
 
-        create_table_query_mysql = """
+        create_users_table_query = """
             CREATE TABLE IF NOT EXISTS users (
                 id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
                 username CHAR(128) NOT NULL UNIQUE,
@@ -79,7 +111,6 @@ def register():
             )
         """
 
-        # Recaptcha verification
         recaptcha_response = request.form.get("g-recaptcha-response")
         recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
         response = requests.post(
@@ -89,34 +120,32 @@ def register():
 
         recaptcha_data = response.json()
         # print(recaptcha_data["success"])
+
         if not recaptcha_data["success"]:
-            error_message_recaptcha = "reCAPTCHA verification failed. Please try again."
-            return render_template(
-                "register.html", error_message_recaptcha=error_message_recaptcha
-            )
+            flash("reCAPTCHA verification failed. Please try again.", "error")
+            return redirect("register")
 
         existing_user_query = "SELECT * FROM users WHERE username=%s"
-        existing_user_username = None
-
-        cursor = connection_db.cursor()
-        cursor.execute(create_table_query_mysql)
-
-        cursor.execute(existing_user_query, (username,))
-        existing_user_username = cursor.fetchone()
+        insert_user_query = (
+            "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
+        )
+        existing_user_username = db_connection(
+            existing_user_query, create_users_table_query, (username,)
+        )
 
         if existing_user_username:
-            error_message = "Username taken. Please choose a different username"
-            return render_template("register.html", error_message=error_message)
+            flash("Username taken. Please choose a different username", "error")
+            return redirect("register")
 
         hashed_password = bcrypt.generate_password_hash(password)
         decoded_hashd_password = hashed_password.decode("utf-8")
         # print("hash while register: ", decoded_hashd_password)
-
-        insert_user_query = (
-            "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
+        db_connection(
+            insert_user_query,
+            create_users_table_query,
+            params=(username, decoded_hashd_password),
         )
-        cursor.execute(insert_user_query, (username, decoded_hashd_password))
-        connection_db.commit()
+
         return render_template("registration_success.html")
 
     return render_template("register.html")
@@ -131,14 +160,13 @@ def login():
         # hashed_incoming = bcrypt.generate_password_hash(password_login)
         # bytes_login = password_login.encode("utf-8")
 
-        create_table_query_mysql = """
+        create_users_table_query = """
             CREATE TABLE IF NOT EXISTS users (
                 id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
                 username CHAR(128) NOT NULL UNIQUE,
                 password_hash CHAR(128) NOT NULL
             )
         """
-
         # Recaptcha verification
         recaptcha_response = request.form.get("g-recaptcha-response")
         recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
@@ -148,24 +176,18 @@ def login():
         )
 
         recaptcha_data = response.json()
-        # print(recaptcha_data["success"])
         if not recaptcha_data["success"]:
-            error_message_recaptcha = "reCAPTCHA verification failed. Please try again."
-            return render_template(
-                "register.html", error_message_recaptcha=error_message_recaptcha
-            )
+            flash("reCAPTCHA verification failed. Please try again.", "error")
+            return redirect("login")
 
-        user_query = "SELECT * FROM users WHERE username=%s"
-        user_data = None
+        user_query_username = "SELECT * FROM users WHERE username=%s"
+        user_data = db_connection(
+            user_query_username, create_users_table_query, (username_login,)
+        )
 
-        cursor = connection_db.cursor()
-        cursor.execute(create_table_query_mysql)
-        cursor.execute(user_query, (username_login,))
-        user_data = cursor.fetchone()
-        # print(user_data)
         if user_data == None:
-            not_valid = "Invalid User"
-            return render_template("login.html", not_valid=not_valid)
+            flash("Invalid User", "error")
+            return redirect("login")
         hash = user_data[2]
         # print("Hash From DB: ", hash)
         # print("Password while logging in: ", password_login)
@@ -180,8 +202,8 @@ def login():
             login_user(user)
             return redirect("/dashboard")
         else:
-            not_valid = "Invalid User"
-            return render_template("login.html", not_valid=not_valid)
+            flash("Invalid User", "error")
+            return redirect("login")
 
     return render_template("login.html")
 
@@ -201,31 +223,61 @@ def add_student():
         darajah = request.form["std"]
         juz = request.form["currenthifz"]
         email = request.form["email"]
-        create_table_query_mysql = """
+        create_students_table_query_mysql = """
             CREATE TABLE IF NOT EXISTS students (
                 id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+                teacher_id SMALLINT(5) NOT NULL,
                 fullname CHAR(128) NOT NULL,
                 darajah CHAR(128) NOT NULL,
                 juz SMALLINT(2) NOT NULL,
                 email CHAR(128) DEFAULT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (teacher_id) REFERENCES users (id)
             )
         """
 
-        insert_student_query = "INSERT INTO students (fullname, darajah, juz, email) VALUES (%s, %s, %s, %s)"
+        insert_student_query = "INSERT INTO students (teacher_id, fullname, darajah, juz, email) VALUES (%s, %s, %s, %s, %s)"
 
-        cursor = connection_db.cursor()
-        cursor.execute(create_table_query_mysql)
-        cursor.execute(insert_student_query, (fullname, darajah, juz, email))
-        connection_db.commit()
-        add_success = True
+        db_connection(
+            insert_student_query,
+            create_students_table_query_mysql,
+            params=(current_user.id, fullname, darajah, juz, email),
+        )
 
         add_success_msg = "Student added successfully."
         return render_template("add_student.html", add_success_msg=add_success_msg)
-        # if add_success:
-        #     add_success_msg = "Student added successfully."
-        #     return render_template("add_students", add_student_msg=add_success_msg)
     return render_template("add_student.html")
+
+
+# Hifz entry route
+@app.route("/marks_entry", methods=["GET", "POST"])
+def marks_entry():
+    if request.method == "POST":
+        student_name = request.form["student"]
+        create_daily_entry_table_query = """
+            CREATE TABLE IF NOT EXISTS daily_entry (
+                entry_id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+                time_stamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                teacher_id SMALLINT(5), 
+                student_id SMALLINT(5),
+                murajaah_juz SMALLINT(2),
+                murajaah_marks SMALLINT(2),
+                juzhaali_from SMALLINT(3),
+                juzhaali_to SMALLINT(3),
+                juzhaali_marks SMALLINT(2),
+                jadeed_surah VARCHAR(128),
+                jadeed_ayah SMALLINT(3),
+                remarks_parent TEXT DEFAULT NULL,
+                remarks_student TEXT DEFAULT NULL
+                FOREIGN KEY (teacher_id, student_id) REFERENCES students (teacher_id, student_id),
+            )
+        """
+        fetch_teacher_id_query = "SELECT teacher_id FROM students WHERE fullname = %s"
+        teacher_id = db_connection(
+            fetch_teacher_id_query, params=(current_user.id, student_name)
+        )
+
+    return render_template("marks_entry.html")
 
 
 # Logout route
