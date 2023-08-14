@@ -9,307 +9,260 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        body,
+        html {
             background-image: url('/static/5630974.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            margin: 0;
-            overflow-x: hidden;
         }
 
-        a {
-            font-size: 18px;
-            margin: 0;
+
+        .hifz_entry {
+            padding-top: 30px;
 
         }
 
-        #dashboard {
-            margin-top: 20px;
-        }
-
-        #add_success_msg h3 {
-            text-align: center;
-        }
-
-        .form-wrapper.student {
-            display: flex;
-            padding-bottom: 15px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .form-wrapper.murajaah {
+        .form-row.student {
             display: flex;
             justify-content: center;
             align-items: center;
+            text-align: center;
+            height: 80px
         }
 
-        .form-wrapper.juzhaali {
+        .form-row.murajaah {
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .form-group {
-
             text-align: center;
+            height: 80px
         }
 
-        .form-group.roll {
-            margin-left: 20px;
-        }
-
-        .form-control {
-            width: 180px;
+        .form-row.juzhaali {
             display: flex;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            height: 80px
         }
 
-
-        #juzhaali {
-            width: 112.5px;
-        }
-
-        #juzhaalilabel {
-            font-size: 13px;
-            margin-left: 13px;
-        }
-
-        .form-control.juzhaalito {
-            margin-left: 20px;
-        }
-
-        .form-control.juzhaalimarks {
-            margin-left: 20px;
-        }
-
-        .form-wrapper.remarks {
+        .form-group.col-md-4 {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
+            width: 250px;
         }
 
-        .paragraph-input {
-            width: 550px;
-            height: 66px;
-            /* Adjust height as needed */
-            border: 1px inset lightgray;
-            box-sizing: border-box;
-            resize: none;
-            /* Disable resizing */
-            vertical-align: top;
-            font-size: 16px;
-        }
-
-        .text-center {
+        .form-group.col-md-6 {
             display: flex;
-            text-align: center;
+            flex-direction: column;
             justify-content: center;
-            padding-top: 23px;
-            /* border: 1px solid #ccc; */
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            width: 670px;
-            height: 600px;
+            width: 377px;
+        }
+
+        .form-group.col-md-6.remarks {
+            align-items: center;
+            width: 100%;
+        }
+
+        #paragraph {
+            width: 750px;
+            height: 100px
+        }
+
+        #remarks {
+            height: 5px
+        }
+
+
+        .form-row.remarks {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            height: 250px;
+
+        }
+
+        .form-row.button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .dashboard_url {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
             margin-top: 10px;
         }
 
-        @media (max-width: 767px) {
+        .form-control {
+            text-align: center;
+        }
 
-            /* body {
-                display: flex;
-                flex-direction: column;
-                justify-content: top;
-                align-items: top;
-                width: 10%;
-                min-height: 100vh;
-                background-image: url('/static/5630974.jpg');
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }*/
-
+        @media only screen and (max-width: 480px) {
             body {
-                display: block;
-                justify-content: top;
-                align-items: top;
-                width: 100vw;
-                min-height: 100vh;
-                background-image: url('/static/5630974.jpg');
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                overflow-x: hidden;
+                height: 1080px
             }
 
-            .text-center {
-                width: 100%;
-                background-color: transparent;
+            .hifz_entry {
+                padding-top: 20px;
             }
 
-            .form-wrapper.student {
+
+            .form-row.student {
+
                 flex-direction: column;
+                height: 220px;
             }
 
-            .form-group.roll {
-                margin-left: 0;
-            }
-
-            .form-wrapper.murajaah {
+            .form-row.murajaah {
                 flex-direction: column;
+                height: 170px;
+                padding-top: 10px;
             }
 
-            .form-wrapper.juzhaali {
+            .form-row.juzhaali {
                 flex-direction: column;
+                height: 220px;
+                padding-top: 10px;
             }
 
-            #juzhaalilabel {
-                margin: 0;
+            .form-group.col-md-4 {
+                width: 80%;
             }
 
-            .form-control.juzhaalito {
-                margin-left: 0;
+            .form-group.col-md-6 {
+                width: 80%;
             }
 
-            .form-control.juzhaalimarks {
-                margin-left: 0;
+            #paragraph {
+                width: 80%;
             }
-
-            .paragraph-input {
-                width: 100%;
-            }
-
-            a {
-                font-size: 14px;
-            }
-
-
-
         }
     </style>
 </head>
 
 <body>
-
-    <div class="container text-center">
-        <div id="add_success_msg">
-            <h3></h3>
-        </div>
-        <form method="post" action="/marks_entry" accept-charset="UTF-8" onclick="displayMessage()">
-            <!-- Form fields for student data -->
-            <div class="form-wrapper student">
-                <div class="form-group">
-                    <label for="sanah">Roll No:</label>
-                    <select class="form-control" id="roll" name="student">
-                        <option value="">Select student</option>
-                        <option value="">
-                            {%for entry in user_data%}
-                            {{entry[]}}
-                            {%endfor%}
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group roll">
-                    <label for="sanah">Student:</label>
-                    <select class="form-control" id="student" name="student" disabled>
-                        <option value="">
-                            {%for entry in user_data%}
-                            {{entry[]}}
-                            {%endfor%}
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group roll">
-                    <label for="sanah">Sanah:</label>
-                    <select class="form-control" id="sanah" name="sanah" disabled>
-                        <option value="">
-                            {%for entry in user_data%}
-                            {{entry[]}}
-                            {%endfor%}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-wrapper murajaah">
-                <div class="form-group">
-                    <label for="currenthifz">Muraja'ah Juz:</label>
-                    <select class="form-control" id="murajaahjuz" name="murajahjuz" required>
-                        <option value="">Select juz</option>
-                        {%for entry in user_id%}
-                        {{entry}}
-                        {%endfor%}
-                    </select><br>
-                </div>
-
-                <div class="form-group">
-                    <label for="currenthifz">Muraja'ah Marks:</label>
-                    <select class="form-control" id="murajaahmarks" name="murajaahmarks" required>
-                        <option value="">Select juz</option>
-                        {%for entry in user_id%}
-                        {{entry}}
-                        {%endfor%}
-                    </select><br>
-                </div>
-            </div>
-            <div class="form-wrapper juzhaali">
-                <div class="form-group">
-                    <label id="juzhaalilabel">Juz Haali From:</label>
-                    <select class="form-control" id="juzhaalifrom" name="juzhaalifrom" required>
-                        <option value="">Select juz</option>
-                        {%for entry in user_id%}
-                        {{entry}}
-                        {%endfor%}
-                    </select><br>
-                </div>
-
-                <div class="form-group">
-                    <label id="juzhaalilabel">Juz Haali Upto:</label>
-                    <select class="form-control juzhaalito" id="juzhaalito" name="juzhaalito" required>
-                        <option value="">Select juz</option>
-                        {%for entry in user_id%}
-                        {{entry}}
-                        {%endfor%}
-                    </select><br>
-                </div>
-                <div class="form-group">
-                    <label id="juzhaalilabel">Juz Haali Marks:</label>
-                    <select class="form-control juzhaalimarks" id="juzhaalimarks" name="juzhaalimarks" required>
-                        <option value="">Select juz</option>
-                        {%for entry in user_id%}
-                        {{entry}}
-                        {%endfor%}
-                    </select><br>
-                </div>
-            </div>
-            <div class="form-wrapper remarks">
-                <div class="form-group">
-                    <label for="parents">Remarks for parents</label><br>
-                    <textarea name="parent_remarks" id="paragraph" class="paragraph-input"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="student">Remarks for student</label><br>
-                    <textarea name="student_remarks" id="paragraph" class="paragraph-input"></textarea>
-                </div>
-            </div>
-
-
-
-
-            <!-- Submit button -->
-            <input type="submit" value="Add" class="btn btn-default">
-            <div id="dashboard">
-                <a href="{{url_for('dashboard')}}">Dashboard</a>
-            </div>
-
-        </form>
+    <div id="add_success_msg">
+        <h3></h3>
     </div>
+    <form class="hifz_entry" post" action="/marks_entry" onclick="displayMessage()">
+        <!-- Form fields for student data -->
+
+        <div class="form-row student">
+            <div class="form-group col-md-4">
+                <label for="sanah">Roll No:</label>
+                <select class="form-control" id="roll" name="student">
+                    <option value="">Select student</option>
+                    <option value="">
+                        {%for entry in user_data%}
+                        {{entry[]}}
+                        {%endfor%}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="sanah">Student:</label>
+                <select class="form-control" id="student" name="student" disabled>
+                    <option value="">
+                        {%for entry in user_data%}
+                        {{entry[]}}
+                        {%endfor%}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="sanah">Sanah:</label>
+                <select class="form-control" id="sanah" name="sanah" disabled>
+                    <option value="">
+                        {%for entry in user_data%}
+                        {{entry[]}}
+                        {%endfor%}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row murajaah">
+            <div class="form-group col-md-6">
+                <label for="currenthifz">Muraja'ah Juz:</label>
+                <select class="form-control" id="murajaahjuz" name="murajahjuz" required>
+                    <option value="">Select juz</option>
+                    {%for entry in user_id%}
+                    {{entry}}
+                    {%endfor%}
+                </select><br>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="currenthifz">Muraja'ah Marks:</label>
+                <select class="form-control" id="murajaahmarks" name="murajaahmarks" required>
+                    <option value="">Select juz</option>
+                    {%for entry in user_id%}
+                    {{entry}}
+                    {%endfor%}
+                </select><br>
+            </div>
+        </div>
+        <div class="form-row juzhaali">
+            <div class="form-group col-md-4">
+                <label id="juzhaalilabel">Juz Haali From:</label>
+                <select class="form-control" id="juzhaalifrom" name="juzhaalifrom" required>
+                    <option value="">Select juz</option>
+                    {%for entry in user_id%}
+                    {{entry}}
+                    {%endfor%}
+                </select><br>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label id="juzhaalilabel">Juz Haali Upto:</label>
+                <select class="form-control" id="juzhaalito" name="juzhaalito" required>
+                    <option value="">Select juz</option>
+                    {%for entry in user_id%}
+                    {{entry}}
+                    {%endfor%}
+                </select><br>
+            </div>
+            <div class="form-group col-md-4">
+                <label id="juzhaalilabel">Juz Haali Marks:</label>
+                <select class="form-control" id="juzhaalimarks" name="juzhaalimarks" required>
+                    <option value="">Select juz</option>
+                    {%for entry in user_id%}
+                    {{entry}}
+                    {%endfor%}
+                </select><br>
+            </div>
+        </div>
+
+        <div class="form-row remarks">
+            <div class="form-group col-md-6 remarks">
+                <label id="remarks" for="parents">Remarks for parents</label><br>
+                <textarea name="parent_remarks" id="paragraph" class="paragraph-input"></textarea>
+            </div>
+            <div class="form-group col-md-6 remarks">
+                <label id="remarks" for="student">Remarks for student</label><br>
+                <textarea name="student_remarks" id="paragraph" class="paragraph-input"></textarea>
+            </div>
+        </div>
+        <!-- Submit button -->
+        <div class="form-row button">
+            <input type="submit" value="Add" class="btn btn-default">
+        </div>
+
+    </form>
+    <div class="dashboard_url">
+        <a href="{{url_for('dashboard')}}">Dashboard</a>
+    </div>
+
 
     <script>
         function displayMessage() {

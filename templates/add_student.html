@@ -12,7 +12,6 @@
         body {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             min-height: 100vh;
             background-image: url('/static/5630974.jpg');
@@ -21,17 +20,29 @@
             background-attachment: fixed;
         }
 
-        .container h1 {
-            text-align: center;
-
+        h1 {
+            padding-top: 50px;
         }
 
         .container {
+            padding-top: 20px;
             width: 35%;
         }
 
+        .submit-button {
+            display: flex;
+            justify-content: center;
+        }
+
         @media (max-width: 767px) {
+
+
+            h1 {
+                padding-top: 70px;
+            }
+
             .container {
+                padding-top: 20px;
                 width: 100%;
             }
         }
@@ -48,14 +59,16 @@
 
         }
 
-        #dashboard {
-            margin-top: 20px;
+        #dashboard_url {
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
         }
     </style>
 </head>
 
 <body>
-    <div id="add_success_msg">
+    <div class="add_success_msg">
         <h3 style="color: darkblue;">{{ add_success_msg }}</h2>
     </div>
     <h1>ADD STUDENT</h1>
@@ -127,9 +140,11 @@
             </div>
 
 
-            <!-- Submit button -->
-            <input type="submit" value="Add" class="btn btn-default">
-            <div id="dashboard">
+            <div class="submit-button">
+                <input type="submit" value="Add" class="btn btn-default">
+            </div>
+
+            <div id="dashboard_url">
                 <a href="{{url_for('dashboard')}}">Dashboard</a>
             </div>
         </form>
