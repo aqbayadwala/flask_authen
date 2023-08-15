@@ -64,13 +64,23 @@
             justify-content: center;
             padding-top: 20px;
         }
+
+        .sucess {
+            color: blue;
+        }
     </style>
 </head>
 
 <body>
-    <div class="add_success_msg">
-        <h3 style="color: darkblue;">{{ add_success_msg }}</h2>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    <div class="sucess">
+        {% for category, message in messages %}
+        <h2>{{ message }}</h2>
+        {%endfor%}
     </div>
+    {%endif%}
+    {%endwith%}
     <h1>ADD STUDENT</h1>
     <div class="container">
         <form method="post" action="/add_student" accept-charset="UTF-8">
@@ -95,8 +105,13 @@
                     <option value="Sameanah">Sameanah</option>
                     <option value="Taseah">Taseah</option>
                     <option value="Asherah">Asherah</option>
+                    <option value="Asherah">Alumni</option>
                     <!-- Add more options as needed -->
                 </select><br>
+            </div>
+            <div class="form-group">
+                <label for="itsno">ITS Number:</label>
+                <input class="form-control" type="text" id="itsno" name="itsno" required><br>
             </div>
             <div class="form-group">
                 <label for="currenthifz">Current Hifz Juz:</label>

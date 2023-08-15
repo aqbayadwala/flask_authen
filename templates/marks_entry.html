@@ -19,7 +19,7 @@
 
 
         .hifz_entry {
-            padding-top: 30px;
+            margin-top: 50px;
 
         }
 
@@ -28,7 +28,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            height: 80px
+            height: 70px
         }
 
         .form-row.murajaah {
@@ -36,10 +36,10 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            height: 80px
+            height: 100px;
         }
 
-        .form-row.juzhaali {
+        .form-row.jadeed {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -107,9 +107,10 @@
             text-align: center;
         }
 
+
         @media only screen and (max-width: 480px) {
             body {
-                height: 1080px
+                height: 1010px
             }
 
             .hifz_entry {
@@ -125,14 +126,15 @@
 
             .form-row.murajaah {
                 flex-direction: column;
-                height: 170px;
+                height: 240px;
                 padding-top: 10px;
             }
 
-            .form-row.juzhaali {
+
+            .form-row.jadeed {
                 flex-direction: column;
-                height: 220px;
-                padding-top: 10px;
+                height: 190px;
+
             }
 
             .form-group.col-md-4 {
@@ -151,95 +153,67 @@
 </head>
 
 <body>
-    <div id="add_success_msg">
-        <h3></h3>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    <div class="sucess" style=" text-align: center; color:blue">
+        {% for category, message in messages %}
+        <h3>{{ message }}</h3>
+        {%endfor%}
     </div>
-    <form class="hifz_entry" post" action="/marks_entry" onclick="displayMessage()">
+    {%endif%}
+    {%endwith%}
+    <form class="hifz_entry" method="post" action="/marks_entry">
         <!-- Form fields for student data -->
 
         <div class="form-row student">
             <div class="form-group col-md-4">
-                <label for="sanah">Roll No:</label>
-                <select class="form-control" id="roll" name="student">
-                    <option value="">Select student</option>
-                    <option value="">
-                        {%for entry in user_data%}
-                        {{entry[]}}
-                        {%endfor%}
-                    </option>
-                </select>
+                <label for="its">ITS No:</label>
+                <input class="form-control" type="text" id="its" name="its" onchange=handleITSInputChange()
+                    required><br>
             </div>
             <div class="form-group col-md-4">
-                <label for="sanah">Student:</label>
-                <select class="form-control" id="student" name="student" disabled>
-                    <option value="">
-                        {%for entry in user_data%}
-                        {{entry[]}}
-                        {%endfor%}
-                    </option>
-                </select>
+                <label for="student">Student:</label>
+                <input class="form-control" id="student" name="student" readonly>
+                <input type="hidden" class="form-control" id="student1" name="student1" hidden><br>
             </div>
             <div class="form-group col-md-4">
                 <label for="sanah">Sanah:</label>
-                <select class="form-control" id="sanah" name="sanah" disabled>
-                    <option value="">
-                        {%for entry in user_data%}
-                        {{entry[]}}
-                        {%endfor%}
-                    </option>
-                </select>
+                <input class="form-control" id="sanah" name="sanah" readonly>
+                <input type="hidden" class="form-control" id="sanah1" name="sanah1" hidden><br>
             </div>
         </div>
 
         <div class="form-row murajaah">
-            <div class="form-group col-md-6">
-                <label for="currenthifz">Muraja'ah Juz:</label>
-                <select class="form-control" id="murajaahjuz" name="murajahjuz" required>
-                    <option value="">Select juz</option>
-                    {%for entry in user_id%}
-                    {{entry}}
-                    {%endfor%}
-                </select><br>
+            <div class="form-group col-md-4">
+                <label id="autogen" for="murajaahjuz">Muraja'ah Juz:</label>
+                <input class="form-control" id="murajaahjuz" name="murajaahjuz" required>
             </div>
 
-            <div class="form-group col-md-6">
-                <label for="currenthifz">Muraja'ah Marks:</label>
-                <select class="form-control" id="murajaahmarks" name="murajaahmarks" required>
-                    <option value="">Select juz</option>
-                    {%for entry in user_id%}
-                    {{entry}}
-                    {%endfor%}
-                </select><br>
+            <div class="form-group col-md-4">
+                <label id="autogen" for="murajaahmarks">Muraja'ah Marks:</label>
+                <input class="form-control" id="murajaahmarks" name="murajaahmarks" required>
+
+            </div>
+            <div class="form-group col-md-4">
+                <label id="autogen" for="juzhaalimarks">Juz Haali Marks:</label>
+                <input class="form-control" id="juzhaalimarks" name="juzhaalimarks" required>
             </div>
         </div>
-        <div class="form-row juzhaali">
+        <div class="form-row jadeed">
             <div class="form-group col-md-4">
-                <label id="juzhaalilabel">Juz Haali From:</label>
-                <select class="form-control" id="juzhaalifrom" name="juzhaalifrom" required>
-                    <option value="">Select juz</option>
-                    {%for entry in user_id%}
-                    {{entry}}
-                    {%endfor%}
-                </select><br>
-            </div>
+                <label id="jadeedlabel" for="jadeedsurat">Surat:</label>
+                <select class="form-control" id="jadeedsurat" name="jadeedsurat" onchange=handleSuratInputChange()>
+                    <option value="">Select surat</option>
 
-            <div class="form-group col-md-4">
-                <label id="juzhaalilabel">Juz Haali Upto:</label>
-                <select class="form-control" id="juzhaalito" name="juzhaalito" required>
-                    <option value="">Select juz</option>
-                    {%for entry in user_id%}
-                    {{entry}}
-                    {%endfor%}
-                </select><br>
+                </select>
             </div>
             <div class="form-group col-md-4">
-                <label id="juzhaalilabel">Juz Haali Marks:</label>
-                <select class="form-control" id="juzhaalimarks" name="juzhaalimarks" required>
-                    <option value="">Select juz</option>
-                    {%for entry in user_id%}
-                    {{entry}}
-                    {%endfor%}
-                </select><br>
+                <label for="jadeedayaat">Ayat:</label>
+                <input class="form-control" id="jadeedayat" name="jadeedayat">
+            </div>
+            <div class="form-group col-md-4">
+                <label id="jadeedpages">Pages:</label>
+                <input class="form-control" id="jadeedpages" name="jadeedpages">
             </div>
         </div>
 
@@ -250,7 +224,8 @@
             </div>
             <div class="form-group col-md-6 remarks">
                 <label id="remarks" for="student">Remarks for student</label><br>
-                <textarea name="student_remarks" id="paragraph" class="paragraph-input"></textarea>
+                <textarea name="student_remarks" id="paragraph" name="students_remarks"
+                    class="paragraph-input"></textarea>
             </div>
         </div>
         <!-- Submit button -->
@@ -279,6 +254,108 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"
         integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
         crossorigin="anonymous"></script>
+    <script>
+        function handleITSInputChange() {
+            const itsInput = document.getElementById("its");
+            const studentSelect = document.getElementById("student");
+            const student1Select = document.getElementById("student1");
+            const sanahSelect = document.getElementById("sanah");
+            const sanah1Select = document.getElementById("sanah1");
+
+            const itsNumber = itsInput.value;
+
+            if (itsNumber) {
+                fetch(`/api/fetch_student?its_number=${itsNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        studentSelect.value = data.fullname;
+                        student1Select.value = data.fullname;
+                        sanahSelect.value = data.sanah;
+                        sanah1Select.value = data.sanah;
+                        handleSanahInputChange()
+                    })
+            }
+        }
+        /*function handleSuratInputChange() {
+            console.log("Handle Surat")
+            const sanahInput = document.getElementById("sanah1");
+            const suratInput = document.getElementById("jadeedsurat")
+            let jadeedAyat = document.getElementById("jadeedayat")
+
+            const sanah = sanahInput.value;
+            const surat = suratInput.value
+            console.log(sanah)
+
+            let ayatInput = []
+
+            if (sanah) {
+                fetch(`/api/fetch_surat?sanah_input=${sanah}&surat_input=${surat}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        let from_ayat = data.from_ayat
+                        let to_ayat = data.to_ayat
+
+                        for (let i = from_ayat; i <= to.ayat; i++) {
+
+                            const option = document.createElement("option");
+                            option.value = i;
+                            option.text = i;
+                            jadeedAyat.appendChild(option);
+                        }
+
+                    })
+            }
+        }*/
+
+        function handleSanahInputChange() {
+            console.log("Handle Sanah")
+            const sanahInput = document.getElementById("sanah1");
+            const jadeedsurat = document.getElementById("jadeedsurat");
+            const jadeedayat = document.getElementById("jadeeayat");
+            let suratList = []
+            const sanah = sanahInput.value;
+            console.log(sanah)
+
+            if (sanah) {
+                fetch(`/api/fetch_surat?sanah_input=${sanah}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        console.log(data)
+                        suratList = data.surat_list
+
+                        for (var i = 0; i < suratList.length; i++) {
+                            var option = document.createElement("option");
+                            option.value = suratList[i];
+                            option.text = suratList[i];
+                            jadeedsurat.appendChild(option);
+                        }
+
+                    })
+            }
+        }
+
+        function populateMarks(selectId) {
+            const selectElement = document.getElementById(selectId);
+
+            // Clear existing options
+            selectElement.innerHTML = '';
+
+            // Loop to generate options from 1 to 10
+            for (let i = 1; i <= 10; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                selectElement.appendChild(option);
+            }
+        }
+
+        // Call the function with the ID of the select element you want to populate
+        populateMarks("murajaahmarks");
+        populateMarks("juzhaalimarks"); // Example for another select element
+    </script>
 </body>
 
 </html>

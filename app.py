@@ -1,4 +1,13 @@
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    session,
+    url_for,
+    flash,
+    jsonify,
+)
 import pymysql
 import os
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -12,7 +21,7 @@ bcrypt = Bcrypt(app)
 
 # configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URL")
-app.config["SECRET_KEY"] = "secret"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 # app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 
@@ -50,6 +59,53 @@ def db_connection(other_query, create_table=None, params=None):
             cursor.execute(other_query, params)
 
         data = cursor.fetchone()
+        cursor.close()
+        connection_db.commit()
+        return data
+
+
+def db_connection_only_first_index(other_query, create_table=None, params=None):
+    with pymysql.connect(
+        host="localhost",
+        port=3306,
+        user="cadbay",
+        password="TestPassword_123",
+        database="flask_authen",
+    ) as connection_db:
+        cursor = connection_db.cursor()
+
+        if create_table:
+            cursor.execute(create_table)
+        if params is None:
+            cursor.execute(other_query)
+        else:
+            cursor.execute(other_query, params)
+
+        data = cursor.fetchall()
+        data = [item[0] for item in data]
+        cursor.close()
+        connection_db.commit()
+        return data
+
+
+def db_connection_all_indexes(other_query, create_table=None, params=None):
+    with pymysql.connect(
+        host="localhost",
+        port=3306,
+        user="cadbay",
+        password="TestPassword_123",
+        database="flask_authen",
+    ) as connection_db:
+        cursor = connection_db.cursor()
+
+        if create_table:
+            cursor.execute(create_table)
+        if params is None:
+            cursor.execute(other_query)
+        else:
+            cursor.execute(other_query, params)
+
+        data = cursor.fetchall()
         cursor.close()
         connection_db.commit()
         return data
@@ -222,31 +278,44 @@ def add_student():
     if request.method == "POST":
         fullname = request.form["fullname"]
         darajah = request.form["std"]
-        juz = request.form["currenthifz"]
+        its = request.form["itsno"]
+        juz = int(request.form["currenthifz"])
         email = request.form["email"]
         create_students_table_query_mysql = """
             CREATE TABLE IF NOT EXISTS students (
-                id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
                 teacher_id SMALLINT(5) NOT NULL,
+                ITS INT PRIMARY KEY,
                 fullname CHAR(128) NOT NULL,
                 darajah CHAR(128) NOT NULL,
-                juz SMALLINT(2) NOT NULL,
+                juz_c SMALLINT(2) NOT NULL,
+                sanah CHAR(128) NOT NULL,
                 email CHAR(128) DEFAULT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (teacher_id) REFERENCES users (id)
             )
         """
 
-        insert_student_query = "INSERT INTO students (teacher_id, fullname, darajah, juz, email) VALUES (%s, %s, %s, %s, %s)"
+        insert_student_query = "INSERT INTO students (teacher_id, ITS, fullname, darajah, juz_c, sanah, email) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+        if juz <= 5:
+            sanah = "Sanah Ula"
+        elif juz <= 12:
+            sanah = "Sanah Saniyah"
+        elif juz <= 21:
+            sanah = "Sanah Salesah"
+        elif juz <= 29:
+            sanah = "Sanah Rabeah"
+        else:
+            sanah = "Sanah Khamis"
 
         db_connection(
             insert_student_query,
             create_students_table_query_mysql,
-            params=(current_user.id, fullname, darajah, juz, email),
+            params=(current_user.id, its, fullname, darajah, juz, sanah, email),
         )
 
-        add_success_msg = "Student added successfully."
-        return render_template("add_student.html", add_success_msg=add_success_msg)
+        flash("Student added successfully.", "success")
+        return redirect("add_student")
     return render_template("add_student.html")
 
 
@@ -254,31 +323,111 @@ def add_student():
 @app.route("/marks_entry", methods=["GET", "POST"])
 def marks_entry():
     if request.method == "POST":
-        student_name = request.form["student"]
+        its = int(request.form["its"])
+        name = request.form["student1"]
+        sanah = request.form["sanah1"]
+        murajaahjuz = int(request.form["murajaahjuz"])
+        murajaahmarks = float(request.form["murajaahmarks"])
+        juzhaalimarks = float(request.form["juzhaalimarks"])
+        jadeedsurat = request.form["jadeedsurat"]
+        if jadeedsurat == "":
+            jadeedsurat = None
+        else:
+            jadeedsurat = jadeedsurat
+        jadeedayat = request.form["jadeedayat"]
+        jadeedpages = request.form["jadeedpages"]
+        if jadeedayat == "":
+            jadeedayat = None
+        else:
+            jadeedayat = int(request.form["jadeedayat"])
+
+        if jadeedpages == "":
+            jadeedpages = 0
+        else:
+            jadeedpages = int(request.form["jadeedpages"])
+        for_parent = request.form["parent_remarks"]
+        for_student = request.form["student_remarks"]
+
         create_daily_entry_table_query = """
             CREATE TABLE IF NOT EXISTS daily_entry (
                 entry_id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
                 time_stamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 teacher_id SMALLINT(5), 
-                student_id SMALLINT(5),
-                murajaah_juz SMALLINT(2),
-                murajaah_marks SMALLINT(2),
-                juzhaali_from SMALLINT(3),
-                juzhaali_to SMALLINT(3),
-                juzhaali_marks SMALLINT(2),
-                jadeed_surah VARCHAR(128),
-                jadeed_ayah SMALLINT(3),
+                ITS INT,
+                murajaah_juz CHAR(10),
+                murajaah_marks DECIMAL(2,1),
+                juzhaali_marks DECIMAL(2,1),
+                jadeed_surat VARCHAR(128),
+                jadeed_ayat SMALLINT(3),
+                jadeed_pages SMALLINT(3),
                 remarks_parent TEXT DEFAULT NULL,
-                remarks_student TEXT DEFAULT NULL
-                FOREIGN KEY (teacher_id, student_id) REFERENCES students (teacher_id, student_id),
-            )
+                remarks_student TEXT DEFAULT NULL,
+                FOREIGN KEY (teacher_id, ITS) REFERENCES students (teacher_id, ITS))
         """
-        fetch_teacher_id_query = "SELECT teacher_id FROM students WHERE fullname = %s"
-        teacher_id = db_connection(
-            fetch_teacher_id_query, params=(current_user.id, student_name)
+        insert_marks_entry_query = "INSERT INTO daily_entry (teacher_id, ITS, murajaah_juz, murajaah_marks, juzhaali_marks, jadeed_surat, jadeed_ayat, jadeed_pages, remarks_parent, remarks_student) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+
+        db_connection(
+            insert_marks_entry_query,
+            create_table=create_daily_entry_table_query,
+            params=(
+                current_user.id,
+                its,
+                murajaahjuz,
+                murajaahmarks,
+                juzhaalimarks,
+                jadeedsurat,
+                jadeedayat,
+                jadeedpages,
+                for_parent,
+                for_student,
+            ),
         )
 
+        flash("Entry Done.", "success")
+        return redirect("marks_entry")
+
     return render_template("marks_entry.html")
+
+
+@app.route("/api/fetch_student", methods=["GET"])
+def fetch_student():
+    fetch_teacher_id_query = "SELECT teacher_id FROM students WHERE ITS = %s"
+    fetch_student_of_teacher_query = (
+        "SELECT fullname, sanah FROM students WHERE teacher_id = %s AND ITS = %s"
+    )
+    its = int(request.args.get("its_number"))
+    teacher_id = db_connection(fetch_teacher_id_query, params=(its))[0]
+    student_db_data = db_connection(
+        fetch_student_of_teacher_query, params=(teacher_id, its)
+    )
+    student_dict = {"fullname": student_db_data[0], "sanah": student_db_data[1]}
+    return jsonify(student_dict)
+
+
+@app.route("/api/fetch_surat", methods=["GET"])
+def fetch_surat():
+    fetch_surat_query = "SELECT surah_name FROM surat WHERE sanah_type = %s"
+    fetch_ayat_query = (
+        "SELECT from_ayat, to_ayat FROM surat WHERE surat_name = %s AND sanah_type = %s"
+    )
+    sanah = request.args.get("sanah_input")
+    surat = request.args.get("surat_input")
+    if sanah and not surat:
+        print(sanah)
+        surat_db_data = db_connection_only_first_index(
+            fetch_surat_query, params=(sanah,)
+        )
+        # print(ajzaa_db_data)
+        surat = {"surat_list": surat_db_data}
+        print(surat)
+        return jsonify(surat)
+    if sanah and surat:
+        print(sanah)
+        ayat_db_data = db_connection_only_first_index(fetch_ayat_query, params=(surat,))
+        # print(ajzaa_db_data)
+        ayaat = {"from_ayat": ayat_db_data[0], "to_ayat": ayat_db_data[1]}
+        print(ayaat)
+        return jsonify(ayaat)
 
 
 # Logout route
