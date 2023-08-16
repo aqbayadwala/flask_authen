@@ -22,8 +22,7 @@ bcrypt = Bcrypt(app)
 
 # configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URL")
-app.config["SECRET_KEY"] = "secret"
-# app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 
 # Login manager
@@ -275,6 +274,7 @@ def dashboard():
 
 # Add student route
 @app.route("/add_student", methods=["GET", "POST"])
+@login_required
 def add_student():
     if request.method == "POST":
         fullname = request.form["fullname"]
@@ -322,6 +322,7 @@ def add_student():
 
 # Hifz entry route
 @app.route("/marks_entry", methods=["GET", "POST"])
+@login_required
 def marks_entry():
     if request.method == "POST":
         its = int(request.form["its"])
@@ -519,4 +520,3 @@ def user_loader(user_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
