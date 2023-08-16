@@ -157,7 +157,7 @@
     {% if messages %}
     <div class="sucess" style=" text-align: center; color:blue">
         {% for category, message in messages %}
-        <h3>{{ message }}</h3>
+        <h4>{{ message }}</h4>
         {%endfor%}
     </div>
     {%endif%}
@@ -230,7 +230,7 @@
         </div>
         <!-- Submit button -->
         <div class="form-row button">
-            <input type="submit" value="Add" class="btn btn-default">
+            <input type="submit" value="Submit" class="btn btn-default">
         </div>
 
     </form>
@@ -314,7 +314,9 @@
             const sanahInput = document.getElementById("sanah1");
             const jadeedsurat = document.getElementById("jadeedsurat");
             const jadeedayat = document.getElementById("jadeeayat");
-            let suratList = []
+
+            jadeedsurat.innerHTML = "<option value=''>Select surat</option>"
+
             const sanah = sanahInput.value;
             console.log(sanah)
 
@@ -324,7 +326,7 @@
                     .then(data => {
 
                         console.log(data)
-                        suratList = data.surat_list
+                        const suratList = data.surat_list
 
                         for (var i = 0; i < suratList.length; i++) {
                             var option = document.createElement("option");

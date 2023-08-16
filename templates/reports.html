@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Reports</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url('/static/5630974.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .container {
+            /*background-color: red;*/
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .report-generator {
+            text-align: center;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+        }
+
+        .start-date,
+        .end-date,
+        .cal-button {
+            width: 250px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .header-cell {
+            text-align: center;
+        }
+
+        /*.table-bordered {
+            border-collapse: collapse;
+            border: 2px solid black;
+        }
+
+
+        .table-bordered th.header-cell {
+            border: 2px solid black;
+            text-align: center;
+            height: 30px;
+        }
+
+
+        .table-bordered td.data-cell {
+            justify-content: center;
+            text-align: center;
+            width: 180px;
+            border: 2px solid black;
+            height: 30px;
+        }*/
+
+        .dashboard_url {
+            padding-top: 50px;
+            font-size: 25px;
+        }
+
+        @media only screen and (max-width: 480px) {}
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Report generator</h1>
+        <div class="report-generator">
+
+            <div class="start-date">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date">
+            </div>
+
+            <div class="end-date">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date">
+            </div>
+
+
+
+            <div class=" cal-button">
+                <button id="calculate_average" onclick=populateReport()>Calculate Average</button>
+            </div>
+
+        </div>
+        <div id="table-container"></div>
+        <!-- <table class="table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Student Name</th>
+                    <th>Muraja'ah Average</th>
+                    <th>Juz Haali Average</th>
+                    <th>Overall Average</th>
+                    <th>Jadeed Pages</th>
+                </tr>
+            </thead>
+            <tbody id="report-table-body">
+
+            </tbody>
+        </table> -->
+
+        <div class="dashboard_url">
+            <a href="{{url_for('dashboard')}}">Dashboard</a>
+        </div>
+    </div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ"
+        crossorigin="anonymous"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"
+        integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+        crossorigin="anonymous"></script>
+    <script>
+        function populateReport() {
+            const startDate = document.getElementById("start_date").value
+            const endDate = document.getElementById("end_date").value
+            console.log(startDate)
+            fetch(`/api/fetch_report?start_date=${startDate}&end_date=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    let tableContainer = document.getElementById("table-container");
+                    let table = document.createElement("table");
+                    // table.classList.add("table-bordered");
+                    table.classList.add("table");
+
+                    let thead = document.createElement("thead");
+                    let theadrow = document.createElement("tr");
+                    theadrow.innerHTML = "<th class='header-cell'>Rank</th>"
+                        + "<th class='header-cell'>Student</th>"
+                        + "<th class='header-cell'>Muraj'at</th>"
+                        + "<th class='header-cell'>Juz Haali</th>"
+                        + "<th class='header-cell'>Overall</th>"
+                        + "<th class='header-cell'>Jadeed</th>";
+
+                    thead.appendChild(theadrow);
+
+                    let tbody = document.createElement("tbody")
+                    for (i = 0; i < data.length; i++) {
+                        let row = document.createElement("tr");
+
+                        // Create <td> elements and set their content
+                        let rankCell = document.createElement("td");
+                        rankCell.textContent = data[i].rank;
+                        rankCell.classList.add("data-cell");
+                        let studentCell = document.createElement("td");
+                        studentCell.textContent = data[i].student_name;
+                        studentCell.classList.add("data-cell");
+                        let murajaahCell = document.createElement("td");
+                        murajaahCell.textContent = data[i].murajaah;
+                        murajaahCell.classList.add("data-cell");
+                        let juzhaaliCell = document.createElement("td");
+                        juzhaaliCell.textContent = data[i].juzhaali;
+                        juzhaaliCell.classList.add("data-cell");
+                        let averageCell = document.createElement("td");
+                        averageCell.textContent = data[i].average;
+                        averageCell.classList.add("data-cell")
+                        let jadeedCell = document.createElement("td");
+                        jadeedCell.textContent = data[i].jadeed;
+                        jadeedCell.classList.add("data-cell");
+
+                        // Append <td> elements to the row
+                        row.appendChild(rankCell);
+                        row.appendChild(studentCell);
+                        row.appendChild(murajaahCell);
+                        row.appendChild(juzhaaliCell);
+                        row.appendChild(averageCell);
+                        row.appendChild(jadeedCell);
+
+                        tbody.appendChild(row)
+                    }
+
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    tableContainer.innerHTML = ""
+                    tableContainer.appendChild(table);
+
+                })
+        }
+    </script>
+</body>
+
+</html>

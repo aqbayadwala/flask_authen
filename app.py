@@ -14,6 +14,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user
 from flask_login import UserMixin, current_user
 from flask_bcrypt import Bcrypt
 import requests
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -21,7 +22,7 @@ bcrypt = Bcrypt(app)
 
 # configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URL")
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = "secret"
 # app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 
@@ -290,7 +291,7 @@ def add_student():
                 juz_c SMALLINT(2) NOT NULL,
                 sanah CHAR(128) NOT NULL,
                 email CHAR(128) DEFAULT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at DATE DEFAULT (CURRENT_DATE),
                 FOREIGN KEY (teacher_id) REFERENCES users (id)
             )
         """
@@ -351,7 +352,7 @@ def marks_entry():
         create_daily_entry_table_query = """
             CREATE TABLE IF NOT EXISTS daily_entry (
                 entry_id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
-                time_stamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                date_stamp DATE DEFAULT (CURRENT_DATE),
                 teacher_id SMALLINT(5), 
                 ITS INT,
                 murajaah_juz CHAR(10),
@@ -389,6 +390,11 @@ def marks_entry():
     return render_template("marks_entry.html")
 
 
+@app.route("/reports", methods=["GET", "POST"])
+def reports():
+    return render_template("reports.html")
+
+
 @app.route("/api/fetch_student", methods=["GET"])
 def fetch_student():
     fetch_teacher_id_query = "SELECT teacher_id FROM students WHERE ITS = %s"
@@ -421,13 +427,71 @@ def fetch_surat():
         surat = {"surat_list": surat_db_data}
         print(surat)
         return jsonify(surat)
-    if sanah and surat:
-        print(sanah)
-        ayat_db_data = db_connection_only_first_index(fetch_ayat_query, params=(surat,))
-        # print(ajzaa_db_data)
-        ayaat = {"from_ayat": ayat_db_data[0], "to_ayat": ayat_db_data[1]}
-        print(ayaat)
-        return jsonify(ayaat)
+    # if sanah and surat:
+    #     print(sanah)
+    #     ayat_db_data = db_connection_only_first_index(fetch_ayat_query, params=(surat,))
+    #     # print(ajzaa_db_data)
+    #     ayaat = {"from_ayat": ayat_db_data[0], "to_ayat": ayat_db_data[1]}
+    #     print(ayaat)
+    #     return jsonify(ayaat)
+
+
+@app.route("/api/fetch_report", methods=["GET"])
+def fetch_report():
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+    print(start_date)
+    if start_date == "":
+        start_date = "2023-08-16"
+    if end_date == "":
+        end_date = datetime.now().strftime("%Y-%m-%d")
+    print(start_date)
+    get_full_report_query = """
+        WITH AvgCalculation AS (
+            SELECT
+                s.fullname,
+                ROUND(AVG(d.murajaah_marks), 2) AS Murajaah,
+                ROUND(AVG(d.juzhaali_marks), 2) AS Juzhaali,
+                SUM(d.jadeed_pages) AS Jadeed
+            FROM
+                students s
+            INNER JOIN daily_entry d ON s.ITS = d.ITS
+            WHERE
+                d.date_stamp >= %s AND d.date_stamp <= %s
+            GROUP BY
+                s.fullname
+        )
+        SELECT
+            fullname,
+            Murajaah,
+            Juzhaali,
+            ROUND((Murajaah + Juzhaali) / 2, 2) AS Average,
+            Jadeed,
+            RANK() OVER (ORDER BY (Murajaah + Juzhaali) / 2 DESC) AS ranking
+        FROM AvgCalculation
+        ORDER BY ranking;
+        """
+
+    data = db_connection_all_indexes(
+        get_full_report_query, params=(start_date, end_date)
+    )
+
+    result_list = []
+
+    for row in data:
+        fullname, murajaah, juzhaali, average, jadeed, rank = row
+        result_list.append(
+            {
+                "rank": rank,
+                "student_name": fullname,
+                "murajaah": murajaah,
+                "juzhaali": juzhaali,
+                "average": average,
+                "jadeed": jadeed,
+            }
+        )
+    print(result_list)
+    return jsonify(result_list)
 
 
 # Logout route
