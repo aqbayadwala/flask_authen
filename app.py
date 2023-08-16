@@ -456,6 +456,8 @@ def fetch_report():
             FROM
                 students s
             INNER JOIN daily_entry d ON s.ITS = d.ITS
+            WHERE
+                d.date_stamp >= %s AND d.date_stamp <= %s
             GROUP BY
                 s.fullname
         )
