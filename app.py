@@ -456,8 +456,6 @@ def fetch_report():
             FROM
                 students s
             INNER JOIN daily_entry d ON s.ITS = d.ITS
-            WHERE
-                d.date_stamp >= %s AND d.date_stamp <= %s
             GROUP BY
                 s.fullname
         )
@@ -465,9 +463,18 @@ def fetch_report():
             fullname,
             Murajaah,
             Juzhaali,
-            ROUND((Murajaah + Juzhaali) / 2, 2) AS Average,
+            CASE 
+                WHEN Murajaah = 0 THEN Juzhaali
+                WHEN Juzhaali = 0 THEN Murajaah
+                ELSE ROUND((Murajaah + Juzhaali) / 2, 2)
+            END AS Average,
             Jadeed,
-            RANK() OVER (ORDER BY (Murajaah + Juzhaali) / 2 DESC) AS ranking
+            RANK() OVER (ORDER BY (
+                CASE 
+                    WHEN Murajaah = 0 THEN Juzhaali
+                    WHEN Juzhaali = 0 THEN Murajaah
+                    ELSE (Murajaah + Juzhaali) / 2
+                END) DESC) AS ranking
         FROM AvgCalculation
         ORDER BY ranking;
         """
@@ -510,3 +517,4 @@ def user_loader(user_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
