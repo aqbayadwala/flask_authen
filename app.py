@@ -149,63 +149,63 @@ def index():
     return render_template("index.html")
 
 
-# Registration route
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form["username"]
-        # print(username)-debug
-        password = request.form["password"]
+# # Registration route
+# @app.route("/register", methods=["GET", "POST"])
+# def register():
+#     if request.method == "POST":
+#         username = request.form["username"]
+#         # print(username)-debug
+#         password = request.form["password"]
 
-        # bytes_register = password.encode("utf-8")
-        # print(password)-debug
+#         # bytes_register = password.encode("utf-8")
+#         # print(password)-debug
 
-        create_users_table_query = """
-            CREATE TABLE IF NOT EXISTS users (
-                id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
-                username CHAR(128) NOT NULL UNIQUE,
-                password_hash CHAR(128) NOT NULL
-            )
-        """
+#         create_users_table_query = """
+#             CREATE TABLE IF NOT EXISTS users (
+#                 id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
+#                 username CHAR(128) NOT NULL UNIQUE,
+#                 password_hash CHAR(128) NOT NULL
+#             )
+#         """
 
-        recaptcha_response = request.form.get("g-recaptcha-response")
-        recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
-        response = requests.post(
-            "https://www.google.com/recaptcha/api/siteverify",
-            {"secret": recaptcha_secret, "response": recaptcha_response},
-        )
+#         recaptcha_response = request.form.get("g-recaptcha-response")
+#         recaptcha_secret = os.environ.get("RECAPTCHA_SECRET")
+#         response = requests.post(
+#             "https://www.google.com/recaptcha/api/siteverify",
+#             {"secret": recaptcha_secret, "response": recaptcha_response},
+#         )
 
-        recaptcha_data = response.json()
-        # print(recaptcha_data["success"])
+#         recaptcha_data = response.json()
+#         # print(recaptcha_data["success"])
 
-        if not recaptcha_data["success"]:
-            flash("reCAPTCHA verification failed. Please try again.", "error")
-            return redirect("register")
+#         if not recaptcha_data["success"]:
+#             flash("reCAPTCHA verification failed. Please try again.", "error")
+#             return redirect("register")
 
-        existing_user_query = "SELECT * FROM users WHERE username=%s"
-        insert_user_query = (
-            "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
-        )
-        existing_user_username = db_connection(
-            existing_user_query, create_users_table_query, (username,)
-        )
+#         existing_user_query = "SELECT * FROM users WHERE username=%s"
+#         insert_user_query = (
+#             "INSERT INTO users (username, password_hash) VALUES (%s, %s)"
+#         )
+#         existing_user_username = db_connection(
+#             existing_user_query, create_users_table_query, (username,)
+#         )
 
-        if existing_user_username:
-            flash("Username taken. Please choose a different username", "error")
-            return redirect("register")
+#         if existing_user_username:
+#             flash("Username taken. Please choose a different username", "error")
+#             return redirect("register")
 
-        hashed_password = bcrypt.generate_password_hash(password)
-        decoded_hashd_password = hashed_password.decode("utf-8")
-        # print("hash while register: ", decoded_hashd_password)
-        db_connection(
-            insert_user_query,
-            create_users_table_query,
-            params=(username, decoded_hashd_password),
-        )
+#         hashed_password = bcrypt.generate_password_hash(password)
+#         decoded_hashd_password = hashed_password.decode("utf-8")
+#         # print("hash while register: ", decoded_hashd_password)
+#         db_connection(
+#             insert_user_query,
+#             create_users_table_query,
+#             params=(username, decoded_hashd_password),
+#         )
 
-        return render_template("registration_success.html")
+#         return render_template("registration_success.html")
 
-    return render_template("register.html")
+#     return render_template("register.html")
 
 
 # Login Route
