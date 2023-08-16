@@ -67,11 +67,11 @@ def db_connection(other_query, create_table=None, params=None):
 
 def db_connection_only_first_index(other_query, create_table=None, params=None):
     with pymysql.connect(
-        host="localhost",
-        port=3306,
-        user="cadbay",
-        password="TestPassword_123",
-        database="flask_authen",
+        host=os.environ.get("MYSQLHOST"),
+        port=int(os.environ.get("MYSQLPORT")),
+        user=os.environ.get("MYSQLUSER"),
+        password=os.environ.get("MYSQLPASSWORD"),
+        database=os.environ.get("MYSQLDATABASE"),
     ) as connection_db:
         cursor = connection_db.cursor()
 
@@ -91,11 +91,11 @@ def db_connection_only_first_index(other_query, create_table=None, params=None):
 
 def db_connection_all_indexes(other_query, create_table=None, params=None):
     with pymysql.connect(
-        host="localhost",
-        port=3306,
-        user="cadbay",
-        password="TestPassword_123",
-        database="flask_authen",
+        host=os.environ.get("MYSQLHOST"),
+        port=int(os.environ.get("MYSQLPORT")),
+        user=os.environ.get("MYSQLUSER"),
+        password=os.environ.get("MYSQLPASSWORD"),
+        database=os.environ.get("MYSQLDATABASE"),
     ) as connection_db:
         cursor = connection_db.cursor()
 
