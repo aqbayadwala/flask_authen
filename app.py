@@ -452,7 +452,7 @@ def fetch_report():
     if end_date == "":
         end_date = datetime.now().strftime("%Y-%m-%d")
     # print(start_date)
-    get_full_report_query = """
+    get_full_report_quer = """
         WITH AvgCalculation AS (
             SELECT
                 s.fullname,
