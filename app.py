@@ -331,7 +331,11 @@ def marks_entry():
         sanah = request.form["sanah1"]
         murajaahjuz = int(request.form["murajaahjuz"])
         murajaahmarks = float(request.form["murajaahmarks"])
+        if murajaahmarks == 0:
+            murajaahmarks = None
         juzhaalimarks = float(request.form["juzhaalimarks"])
+        if juzhaalimarks == 0:
+            juzhaalimarks = None
         jadeedsurat = request.form["jadeedsurat"]
         if jadeedsurat == "":
             jadeedsurat = None
@@ -442,12 +446,12 @@ def fetch_surat():
 def fetch_report():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
-    print(start_date)
+    # print(start_date)
     if start_date == "":
         start_date = "2023-08-16"
     if end_date == "":
         end_date = datetime.now().strftime("%Y-%m-%d")
-    print(start_date)
+    # print(start_date)
     get_full_report_query = """
         WITH AvgCalculation AS (
             SELECT
