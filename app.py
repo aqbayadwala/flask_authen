@@ -472,16 +472,16 @@ def fetch_report():
             Murajaah,
             Juzhaali,
             CASE 
-                WHEN Murajaah = 0 THEN Juzhaali
-                WHEN Juzhaali = 0 THEN Murajaah
+                WHEN Murajaah IS NULL OR Murajaah = 0 THEN Juzhaali
+                WHEN Juzhaali IS NULL OR Juzhaali = 0 THEN Murajaah
                 ELSE ROUND((Murajaah + Juzhaali) / 2, 2)
             END AS Average,
             Jadeed,
             RANK() OVER (ORDER BY (
                 CASE 
-                    WHEN Murajaah = 0 THEN Juzhaali
-                    WHEN Juzhaali = 0 THEN Murajaah
-                    ELSE (Murajaah + Juzhaali) / 2
+                WHEN Murajaah IS NULL OR Murajaah = 0 THEN Juzhaali
+                WHEN Juzhaali IS NULL OR Juzhaali = 0 THEN Murajaah
+                ELSE ROUND((Murajaah + Juzhaali) / 2, 2)
                 END) DESC) AS ranking
         FROM AvgCalculation
         ORDER BY ranking;
