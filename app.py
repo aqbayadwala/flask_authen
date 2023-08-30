@@ -397,6 +397,7 @@ def marks_entry():
 
 
 @app.route("/reports", methods=["GET", "POST"])
+@login_required
 def reports():
     return render_template("reports.html")
 
