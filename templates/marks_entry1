@@ -1,3 +1,5 @@
+<!-- The alternate marks entry page -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -150,6 +152,24 @@
             }
         }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const studentSelect = document.getElementById("student");
+
+            // Load students' names when the page is loaded
+            fetch("/api/fetch_students_names")
+                .then(response => response.json())
+                .then(data => {
+                    data.students.forEach(student => {
+                        const option = document.createElement("option");
+                        option.value = student.fullname;
+                        option.textContent = student.fullname;
+                        studentSelect.appendChild(option);
+                    });
+                });
+        });
+    </script>
+
 </head>
 
 <body>
@@ -165,23 +185,26 @@
     <form class="hifz_entry" method="post" action="/marks_entry">
         <!-- Form fields for student data -->
 
+
         <div class="form-row student">
             <div class="form-group col-md-4">
-                <label for="its">ITS No:</label>
-                <input class="form-control" type="text" id="its" name="its" onchange=handleITSInputChange()
-                    required><br>
+                <label for="student">Student:</label>
+                <select class="form-control" id="student" name="student" onchange=handleStudentNameChange()>
+                    <option value="">Select student</option>
+                </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="student">Student:</label>
-                <input class="form-control" id="student" name="student" readonly>
-                <input type="hidden" class="form-control" id="student1" name="student1" hidden><br>
+                <label for="its">ITS No:</label>
+                <input class="form-control" type="text" id="its" name="its" readonly>
+                <input class="form-control" type="hidden" id="its1" name="its1" hidden>
             </div>
             <div class="form-group col-md-4">
                 <label for="sanah">Sanah:</label>
                 <input class="form-control" id="sanah" name="sanah" readonly>
-                <input type="hidden" class="form-control" id="sanah1" name="sanah1" hidden><br>
+                <input type="hidden" class="form-control" id="sanah1" name="sanah1" hidden>
             </div>
         </div>
+
 
         <div class="form-row murajaah">
             <div class="form-group col-md-4">
@@ -357,6 +380,33 @@
         // Call the function with the ID of the select element you want to populate
         populateMarks("murajaahmarks");
         populateMarks("juzhaalimarks"); // Example for another select element
+    </script>
+    <script>
+        function handleStudentNameChange() {
+            const studentSelect = document.getElementById("student");
+            const itsInput = document.getElementById("its");
+            const its1Input = document.getElementById("its1");
+            const sanahInput = document.getElementById("sanah");
+            const sanah1Input = document.getElementById("sanah1");
+
+            const selectedStudent = studentSelect.value;
+
+            if (selectedStudent) {
+                fetch(`/api/fetch_its_sanah?student=${selectedStudent}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update the ITS and Sanah input fields
+                        itsInput.value = data.its;
+                        its1Input.value = data.its;
+                        sanahInput.value = data.sanah;
+                        sanah1Input.value = data.sanah;
+                    });
+            } else {
+                // Clear ITS and Sanah input fields if no student is selected
+                itsInput.value = "";
+                sanahInput.value = "";
+            }
+        }
     </script>
 
 </body>

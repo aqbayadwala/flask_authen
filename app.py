@@ -22,7 +22,7 @@ bcrypt = Bcrypt(app)
 
 # configurations
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("MYSQL_URL")
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or "secret"
 
 
 # Login manager
@@ -326,8 +326,8 @@ def add_student():
 @login_required
 def marks_entry():
     if request.method == "POST":
-        its = int(request.form["its"])
-        name = request.form["student1"]
+        its = int(request.form["its1"])
+        name = request.form["student"]
         sanah = request.form["sanah1"]
         murajaahjuz = int(request.form["murajaahjuz"])
         murajaahmarks = float(request.form["murajaahmarks"])
@@ -358,8 +358,7 @@ def marks_entry():
         create_daily_entry_table_query = """
             CREATE TABLE IF NOT EXISTS daily_entry (
                 entry_id SMALLINT(5) AUTO_INCREMENT PRIMARY KEY,
-                date_stamp DATE DEFAULT (CURRENT_DATE),
-                teacher_id SMALLINT(5), 
+                date_stamp DATE DEFAULT (CURRENT_DATE), 
                 ITS INT,
                 murajaah_juz CHAR(10),
                 murajaah_marks DECIMAL(2,1),
@@ -369,15 +368,14 @@ def marks_entry():
                 jadeed_pages SMALLINT(3),
                 remarks_parent TEXT DEFAULT NULL,
                 remarks_student TEXT DEFAULT NULL,
-                FOREIGN KEY (teacher_id, ITS) REFERENCES students (teacher_id, ITS))
+                FOREIGN KEY (ITS) REFERENCES students (ITS))
         """
-        insert_marks_entry_query = "INSERT INTO daily_entry (teacher_id, ITS, murajaah_juz, murajaah_marks, juzhaali_marks, jadeed_surat, jadeed_ayat, jadeed_pages, remarks_parent, remarks_student) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        insert_marks_entry_query = "INSERT INTO daily_entry (ITS, murajaah_juz, murajaah_marks, juzhaali_marks, jadeed_surat, jadeed_ayat, jadeed_pages, remarks_parent, remarks_student) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);"
 
         db_connection(
             insert_marks_entry_query,
             create_table=create_daily_entry_table_query,
             params=(
-                current_user.id,
                 its,
                 murajaahjuz,
                 murajaahmarks,
@@ -391,9 +389,9 @@ def marks_entry():
         )
 
         flash("Entry Done.", "success")
-        return redirect("marks_entry")
+        return redirect("marks_entry1")
 
-    return render_template("marks_entry.html")
+    return render_template("marks_entry1.html")
 
 
 @app.route("/reports", methods=["GET", "POST"])
@@ -402,18 +400,44 @@ def reports():
     return render_template("reports.html")
 
 
-@app.route("/api/fetch_student", methods=["GET"])
-def fetch_student():
+# @app.route("/api/fetch_student", methods=["GET"])
+# def fetch_student():
+#     fetch_teacher_id_query = "SELECT teacher_id FROM students WHERE ITS = %s"
+#     fetch_student_of_teacher_query = (
+#         "SELECT fullname, sanah FROM students WHERE teacher_id = %s AND ITS = %s"
+#     )
+#     its = int(request.args.get("its_number"))
+#     teacher_id = db_connection(fetch_teacher_id_query, params=(its))[0]
+#     student_db_data = db_connection(
+#         fetch_student_of_teacher_query, params=(teacher_id, its)
+#     )
+#     student_dict = {"fullname": student_db_data[0], "sanah": student_db_data[1]}
+#     return jsonify(student_dict)
+
+
+@app.route("/api/fetch_its_sanah", methods=["GET"])
+def fetch_its_sanah():
+    student_name = request.args.get("student")
+    fetch_its_sanah_query = "SELECT ITS, sanah FROM students WHERE fullname = %s"
     fetch_teacher_id_query = "SELECT teacher_id FROM students WHERE ITS = %s"
-    fetch_student_of_teacher_query = (
-        "SELECT fullname, sanah FROM students WHERE teacher_id = %s AND ITS = %s"
+
+    its_sanah_data = db_connection_all_indexes(
+        fetch_its_sanah_query, params=(student_name,)
     )
-    its = int(request.args.get("its_number"))
-    teacher_id = db_connection(fetch_teacher_id_query, params=(its))[0]
-    student_db_data = db_connection(
-        fetch_student_of_teacher_query, params=(teacher_id, its)
-    )
-    student_dict = {"fullname": student_db_data[0], "sanah": student_db_data[1]}
+    print(its_sanah_data)
+    student_dict = {"its": its_sanah_data[0][0], "sanah": its_sanah_data[0][1]}
+    return jsonify(student_dict)
+
+
+@app.route("/api/fetch_students_names", methods=["GET"])
+def fetch_students():
+    fetch_students_query = "SELECT fullname FROM students"
+    students_db_data = db_connection_all_indexes(fetch_students_query)
+    print(students_db_data)
+    student_dict = {"students": []}
+    for student_data in students_db_data:
+        student_dict["students"].append({"fullname": student_data[0]})
+    print(student_dict)
     return jsonify(student_dict)
 
 
@@ -426,13 +450,13 @@ def fetch_surat():
     sanah = request.args.get("sanah_input")
     surat = request.args.get("surat_input")
     if sanah and not surat:
-        print(sanah)
+        # print(sanah)
         surat_db_data = db_connection_only_first_index(
             fetch_surat_query, params=(sanah,)
         )
         # print(ajzaa_db_data)
         surat = {"surat_list": surat_db_data}
-        print(surat)
+        # print(surat)
         return jsonify(surat)
     # if sanah and surat:
     #     print(sanah)
