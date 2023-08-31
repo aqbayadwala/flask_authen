@@ -160,7 +160,8 @@
             fetch("/api/fetch_students_names")
                 .then(response => response.json())
                 .then(data => {
-                    data.students.forEach(student => {
+                    const sortedStudents = data.students.sort((a, b) => a.fullname.localeCompare(b.fullname));
+                    sortedStudents.forEach(student => {
                         const option = document.createElement("option");
                         option.value = student.fullname;
                         option.textContent = student.fullname;
