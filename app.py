@@ -502,7 +502,7 @@ def fetch_report():
                 ELSE ROUND((Murajaah + Juzhaali) / 2, 2)
             END AS Average,
             Jadeed,
-            RANK() OVER (ORDER BY (
+            DENSE_RANK() OVER (ORDER BY (
                 CASE 
                 WHEN Murajaah IS NULL OR Murajaah = 0 THEN Juzhaali
                 WHEN Juzhaali IS NULL OR Juzhaali = 0 THEN Murajaah
