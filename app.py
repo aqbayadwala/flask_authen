@@ -389,7 +389,7 @@ def marks_entry():
         )
 
         flash("Entry Done.", "success")
-        return redirect("marks_entry1")
+        return redirect("marks_entry")
 
     return render_template("marks_entry1.html")
 
